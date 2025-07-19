@@ -1,0 +1,20 @@
+@import "tailwindcss";
+@layer components {
+  .caixa-letra {
+    @apply w-16 h-16 border-2 border-gray-600 rounded-md
+           flex items-center justify-center
+           text-4xl font-bold uppercase text-white
+           transition-all duration-300;
+  }
+
+  /* Estados que o JS vai adicionar dinamicamente */
+  .certa {
+    @apply bg-green-600 border-green-600;
+  }
+  .lugar-errado {
+    @apply bg-yellow-500 border-yellow-500;
+  }
+  .errada {
+    @apply bg-gray-800 border-gray-800;
+  }
+}
