@@ -1,20 +1,17 @@
 @import "tailwindcss";
-@layer components {
-  .caixa-letra {
-    @apply w-16 h-16 border-2 border-gray-600 rounded-md
-           flex items-center justify-center
-           text-4xl font-bold uppercase text-white
-           transition-all duration-300;
-  }
 
-  /* Estados que o JS vai adicionar dinamicamente */
-  .certa {
-    @apply bg-green-600 border-green-600;
-  }
-  .lugar-errado {
-    @apply bg-yellow-500 border-yellow-500;
-  }
-  .errada {
-    @apply bg-gray-800 border-gray-800;
-  }
+.cursor {
+    @apply !border-blue-500 !border-4 !animate-pulse !scale-120 ;
+}
+
+.box {
+    @apply w-15 h-15 rounded-lg flex items-center justify-center text-2xl font-bold;
+}
+
+.box-active {
+    @apply border-2 border-gray-800 bg-white text-gray-800 dark:border-gray-400 dark:text-gray-200;
+}
+
+.box-inactive {
+    @apply bg-gray-200 text-gray-400 dark:border-gray-600 dark:text-gray-500;
 }
