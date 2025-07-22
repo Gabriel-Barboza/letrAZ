@@ -6262,3 +6262,16 @@ export const tentativasValidas: string[] = ['Aarao',
 'zurre',
 'zurro'];
 export const tentativasValidasFiltradas = tentativasValidas.filter(palavra => palavra.length === 5).map(palavra => palavra.toUpperCase());;
+
+export const dataFixa = new Date('2025-07-18T00:00:00')
+export const hoje = new Date();
+
+function indexPalavra(dataFixa: Date, hoje : Date): number {
+  
+  return Math.floor((hoje.getTime() % dataFixa.getTime()) / (1000 * 60 * 60 * 24));
+
+}
+const index = indexPalavra(dataFixa, hoje);
+export const palavraCerta = respostasFiltradas[index];
+
+
