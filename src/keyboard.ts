@@ -1,4 +1,4 @@
-import { PLAYS, LETTERS } from './gameState';
+
 
 const tecladoContainer = document.getElementById("keyboard")!;
 
