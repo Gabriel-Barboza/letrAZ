@@ -1,9 +1,10 @@
 import './style.css'
 import { gameState, LETTERS } from './gameState';
 import * as board from './board';
-import { submitGuess } from './game';
+import { submitGuess, loadProgress } from './game';
+import { createKeyboard } from './keyboard';
 
-function handleKeyPress(event: KeyboardEvent) {
+export function handleKeyPress(event: KeyboardEvent) {
   if (gameState.isGameOver) return;
   const key = event.key.toLowerCase();
   const previousCol = gameState.currentCol;
@@ -58,5 +59,14 @@ function handleboxClick(row: number, col: number) {
 
 // Inicialização
 board.createBoard(handleboxClick);
-board.CurrentBox(gameState.currentCol, gameState.currentRow);
+createKeyboard(handleKeyPress);
+
+// Tenta carregar o progresso salvo
+const hasProgress = loadProgress();
+
+// Se não carregou progresso, inicia normalmente
+if (!hasProgress) {
+  board.CurrentBox(gameState.currentCol, gameState.currentRow);
+}
+
 document.addEventListener("keydown", handleKeyPress);

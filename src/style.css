@@ -1,17 +1,76 @@
 @import "tailwindcss";
 
 .cursor {
-    @apply !border-blue-500 !border-4 !animate-pulse !scale-120 ;
+    @apply !border-blue-500 !border-4 !animate-pulse !scale-120 !duration-455; 
 }
 
 .box {
-    @apply w-15 h-15 rounded-lg flex items-center justify-center text-2xl font-bold;
+    @apply w-16 h-16 md:w-15 md:h-18 md:w-18 rounded-lg flex items-center justify-center md:text-2xl font-bold ;
 }
 
 .box-active {
-    @apply border-2 border-gray-800 bg-white text-gray-800 dark:border-gray-400 dark:text-gray-200;
+    @apply border-2 border-gray-800 bg-white text-gray-800 shadow-2xl cursor-pointer;
 }
 
 .box-inactive {
-    @apply bg-gray-200 text-gray-400 dark:border-gray-600 dark:text-gray-500;
+    @apply bg-sky-200 text-gray-400;
+}
+
+#keyboard {
+    @apply mt-2 w-full  md:w-1/2 ;
+}
+
+.keyboard-row {
+    @apply flex justify-center   gap-1 mt-1 mb-1 ;
+}
+
+.keyboard-key {
+    @apply  flex-1 h-14 rounded-md flex items-center justify-center    text-lg font-semibold md:w-15 md:h-15  bg-sky-300 opacity-90  text-gray-800 cursor-pointer hover:bg-sky-400;
+}
+
+
+.keyboard-key.correct {
+  background-color: #6aaa64; /* Verde */
+  color: white;
+}
+
+.keyboard-key.present {
+  background-color: #c9b458; /* Amarelo */
+  color: white;
+}
+
+.keyboard-key.absent {
+  background-color: #787c7e; /* Cinza escuro */
+  color: white;
+}
+
+.toast-container {
+  /* Posicionamento */
+  @apply fixed top-5 left-1/2 -translate-x-1/2;
+  
+  /* Estilo */
+  @apply px-6 py-3 rounded-lg shadow-lg text-white font-semibold;
+
+  /* Estado Inicial (Invisível) */
+  @apply opacity-0 -translate-y-10;
+
+  /* Animação */
+  @apply transition-all duration-500 ease-in-out;
+  
+  /* Garante que fique sobre outros elementos */
+  z-index: 50;
+}
+
+/* Classe que o JavaScript vai adicionar para TORNAR VISÍVEL */
+.toast-container.visible {
+  @apply opacity-100 translate-y-0;
+}
+
+/* Estilos para diferentes tipos de mensagem */
+.toast-container.success {
+  @apply bg-green-500;
+}
+
+.toast-container.error {
+  @apply bg-red-500;
 }

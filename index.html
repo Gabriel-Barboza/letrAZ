@@ -1,45 +1,40 @@
 <!doctype html>
-<html lang="pt-br">
+<html lang="pt-br" class="h-full">
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <link rel="icon" type="image/svg+xml" href="public/az.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LetrAZ</title>
 </head>
 
-<body id="app" class="flex flex-col items-center justify-center h-screen  bg-gray-50 dark:bg-gray-900">
+<body id="app" class="flex flex-col h-screen bg-sky-50">
 
-
-
-
-  <header class=" items-center h-1/10  gap-4">
-    <h1 class="text-3xl font-bold underline text-center">LetrAZ</h1>
-    <p class="text-lg text-gray-700 dark:text-gray-300">Um jogo de palavras para exercitar o cérebro!</p>
+  <header class="text-center p-8 bg-sky-600  opacity-90 shadow-md mb-4 " >
+    <h1 class="text-3xl text-white font-bold">LetrAZ</h1>
 
   </header>
-  <p id="message" class="text-lg text-gray-700 dark:text-gray-300"></p>
 
-  <div id="container-tabuleiro" class="flex flex-col justify-center items-center flex-grow">
-    <div id="tabuleiro" class="grid grid-rows-6 gap-2 p-4">
+ <div id="toast" class="toast-container">
+  <span id="toast-message"></span>
+</div>
 
-      <div class="grid grid-cols-5 gap-2">
-
+  <div id="container-tabuleiro" class="flex-grow flex flex-col justify-center items-center w-full">
+    <div id="tabuleiro" class="grid grid-rows-5 gap-2">
       </div>
-
-
-
-    </div>
   </div>
-  </div>
-  <div class="h-3/10 w-full flex flex-col items-center bg-amber-200 justify-center gap-4">
-    <button id="counter" type="button"></button>
-  </div>
-  <footer
-    class=" justify-center items-center h-1/12 w-full gap-2 p-4 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
 
-    footer
+  <div class="w-full flex flex-col items-center justify-center p-2">
+    <div id="keyboard">
+      </div>
+  </div>
+
+  <footer class="text-center mt-3  p-8 bg-sky-200 shadow-2xl text-gray-700">
+    
+    <p>Desenvolvido por João Gabriel<a href="https://github.com/gabriel-barboza" class=" text-black target=_blank">  GITHUB </a> <a href="https://www.linkedin.com/in/joão-gabriel-barboza"  class="text-blue-800" target="_blank"> LINKEDIN </a>  </p>
+    <P>Baseado nos jogos <a href="https://term.ooo" > Termo</a> e <a href="https://www.powerlanguage.co.uk/wordle/"  class="cursor-pointer"> Wordle </a></P>
   </footer>
+
   <script type="module" src="/src/main.ts"></script>
 </body>
 

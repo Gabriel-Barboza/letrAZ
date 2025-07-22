@@ -1,8 +1,8 @@
 export type GameState = {
-  currentRow: number;
-  currentCol: number;
-  guesses: string[];
-  isGameOver: boolean;
+    currentRow: number;
+    currentCol: number;
+    guesses: string[];
+    isGameOver: boolean;
 };
 
 export const PLAYS = 5;
