@@ -1,4 +1,9 @@
+
 import './style.css';
+
+// Importa o estado central e a função de inicialização
+import { state, initializeState, saveState } from './gameState'; // Adicione saveState aqui
+
 
 // Importa o estado central e a função de inicialização
 import { state, initializeState } from './gameState';
@@ -53,6 +58,9 @@ function handleKeyPress(event: KeyboardEvent) {
     if (state.gameState.currentCol > 0) {
       state.gameState.currentCol--;
       board.updateBox("", state.gameState.currentRow, state.gameState.currentCol);
+      
+      // ADICIONE ESTA LINHA: Salva após apagar
+      saveState();
     }
   } else if (key === "arrowleft") {
     if (state.gameState.currentCol > 0) {
@@ -67,6 +75,9 @@ function handleKeyPress(event: KeyboardEvent) {
     // Digita a letra e avança o cursor.
     board.updateBox(key, state.gameState.currentRow, state.gameState.currentCol);
     state.gameState.currentCol++;
+    
+    // ADICIONE ESTA LINHA: Salva após digitar uma letra
+    saveState();
   }
   
   // Atualiza a posição do cursor visual após qualquer movimento.

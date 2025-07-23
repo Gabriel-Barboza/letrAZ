@@ -6030,7 +6030,7 @@ export const tentativasValidas: string[] = ['Aarao',
 'zurro'];
 export const tentativasValidasFiltradas = tentativasValidas.filter(palavra => palavra.length === 5).map(palavra => palavra.toUpperCase());;
 
-export const dataFixa = new Date('2025-07-19T00:00:00')
+export const dataFixa = new Date('2025-07-18T00:00:00')
 export const hoje = new Date();
 
 function indexPalavra(dataFixa: Date, hoje : Date): number {

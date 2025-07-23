@@ -132,6 +132,20 @@ export function restoreBoard() {
         colorizeGuess(guess, rowIndex);
     });
 
+    // ADICIONE: Restaura as letras da linha atual (em progresso)
+    if (!state.gameState.isGameOver && state.gameState.currentRow < PLAYS) {
+        const currentRowElement = document.querySelector(`.row-${state.gameState.currentRow}`);
+        if (currentRowElement) {
+            for (let i = 0; i < LETTERS; i++) {
+                const box = currentRowElement.children[i] as HTMLElement;
+                const letter = box.textContent || '';
+                if (letter) {
+                    board.updateBox(letter, state.gameState.currentRow, i);
+                }
+            }
+        }
+    }
+
     // Se o jogo já terminou ao carregar, esconde o cursor
     if (state.gameState.isGameOver) {
         document.querySelector('.cursor')?.classList.remove('cursor');
