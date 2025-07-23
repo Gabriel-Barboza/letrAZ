@@ -5,9 +5,6 @@ import './style.css';
 import { state, initializeState, saveState } from './gameState'; // Adicione saveState aqui
 
 
-// Importa o estado central e a função de inicialização
-import { state, initializeState } from './gameState';
-
 // Importa os tipos e constantes
 import { LETTERS } from './types';
 
