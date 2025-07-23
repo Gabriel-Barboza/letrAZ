@@ -1,4 +1,4 @@
-import { PLAYS, LETTERS } from './gameState';
+import { PLAYS, LETTERS } from './types';
 
 const grid = document.getElementById("tabuleiro")!;
 export const menssagem = document.getElementById("message")!;

@@ -1,7 +1,7 @@
 // gameState.ts
 
-import type { SaveData, CurrentGameState, GameStats } from './types';
-import { palavraCerta } from './words';
+import type { SaveData } from './types';
+
 
 // Função helper para pegar a data de hoje
 function getTodayDateString(): string {
