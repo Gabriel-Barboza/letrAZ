@@ -1,72 +1,84 @@
-import './style.css'
-import { gameState, LETTERS } from './gameState';
+import './style.css';
+
+// Importa o estado central e a função de inicialização
+import { state, initializeState } from './gameState';
+
+// Importa os tipos e constantes
+import { LETTERS } from './types';
+
+// Importa os módulos que cuidam do tabuleiro, lógica do jogo e teclado
 import * as board from './board';
-import { submitGuess, loadProgress } from './game';
+import { submitGuess, restoreBoard } from './game';
 import { createKeyboard } from './keyboard';
 
-export function handleKeyPress(event: KeyboardEvent) {
-  if (gameState.isGameOver) return;
+// ===================================================================
+// ===== INICIALIZAÇÃO DO JOGO =======================================
+// ===================================================================
+
+// 1. Prepara o estado: carrega do localStorage ou cria um novo para o dia
+initializeState();
+
+// 2. Cria os elementos visuais do tabuleiro e do teclado
+board.createBoard(handleboxClick);
+createKeyboard(handleKeyPress);
+
+// 3. Restaura o visual do tabuleiro caso haja progresso salvo
+restoreBoard();
+
+// 4. Posiciona o cursor visual na posição correta (inicial ou carregada)
+board.CurrentBox(state.gameState.currentCol, state.gameState.currentRow);
+
+// 5. Adiciona o "ouvinte" principal para as teclas do teclado físico
+document.addEventListener("keydown", handleKeyPress);
+
+
+// ===================================================================
+// ===== FUNÇÕES DE INPUT (HANDLERS) =================================
+// ===================================================================
+
+/** Lida com os inputs do teclado físico e virtual. */
+function handleKeyPress(event: KeyboardEvent) {
+  // Se o jogo acabou, bloqueia qualquer ação.
+  if (state.gameState.isGameOver) return;
+
   const key = event.key.toLowerCase();
-  const previousCol = gameState.currentCol;
 
   if (key === "enter") {
     submitGuess();
     return;
   }
 
-  if (key === "arrowleft") {
-    if (gameState.currentCol > 0) gameState.currentCol--;
-  }
-
-  if (key === "arrowright") {
-    if (gameState.currentCol < LETTERS - 1) gameState.currentCol++;
-  }
-
-  if (key == "backspace") {
-    if (gameState.currentCol >= 0) {
-      const linhasElement = document.querySelector(`.row-${gameState.currentRow}`)!;
-      const caixa = linhasElement.children[gameState.currentCol] as HTMLElement;
-      if (caixa.textContent == "" && gameState.currentCol > 0) {
-        gameState.currentCol--;
-        board.updateBox("", gameState.currentRow, gameState.currentCol);
-      }
-
-      board.updateBox("", gameState.currentRow, gameState.currentCol);
-      board.CurrentBox(gameState.currentCol, gameState.currentRow);
+  if (key === "backspace") {
+    // A lógica de apagar é simplificada: sempre apaga a letra anterior ao cursor.
+    if (state.gameState.currentCol > 0) {
+      state.gameState.currentCol--;
+      board.updateBox("", state.gameState.currentRow, state.gameState.currentCol);
     }
-  }
-
-  if (/^[a-z]$/.test(key) && gameState.currentCol < LETTERS) {
-    board.updateBox(key, gameState.currentRow, gameState.currentCol);
-    if (gameState.currentCol < LETTERS - 1) {
-      gameState.currentCol++;
+  } else if (key === "arrowleft") {
+    if (state.gameState.currentCol > 0) {
+      state.gameState.currentCol--;
     }
+  } else if (key === "arrowright") {
+    // Permite mover o cursor até a última caixa, mas não além.
+    if (state.gameState.currentCol < LETTERS -1) {
+      state.gameState.currentCol++;
+    }
+  } else if (/^[a-z]$/.test(key) && state.gameState.currentCol < LETTERS) {
+    // Digita a letra e avança o cursor.
+    board.updateBox(key, state.gameState.currentRow, state.gameState.currentCol);
+    state.gameState.currentCol++;
   }
-
-  if (previousCol !== gameState.currentCol) {
-    board.CurrentBox(gameState.currentCol, gameState.currentRow);
-  }
-}
-
-function handleboxClick(row: number, col: number) {
-  if (gameState.isGameOver) return;
-  if (row < gameState.currentRow || row > gameState.currentRow) return;
   
-  gameState.currentRow = row;
-  gameState.currentCol = col;
-  board.CurrentBox(gameState.currentCol, gameState.currentRow);
+  // Atualiza a posição do cursor visual após qualquer movimento.
+  board.CurrentBox(state.gameState.currentCol, state.gameState.currentRow);
 }
 
-// Inicialização
-board.createBoard(handleboxClick);
-createKeyboard(handleKeyPress);
+/** Lida com o clique do mouse em uma das caixas do tabuleiro. */
+function handleboxClick(row: number, col: number) {
+  // Se o jogo acabou ou o clique não for na linha atual, bloqueia a ação.
+  if (state.gameState.isGameOver || row !== state.gameState.currentRow) return;
 
-// Tenta carregar o progresso salvo
-const hasProgress = loadProgress();
-
-// Se não carregou progresso, inicia normalmente
-if (!hasProgress) {
-  board.CurrentBox(gameState.currentCol, gameState.currentRow);
+  // Atualiza a posição da coluna e o cursor visual.
+  state.gameState.currentCol = col;
+  board.CurrentBox(state.gameState.currentCol, state.gameState.currentRow);
 }
-
-document.addEventListener("keydown", handleKeyPress);
