@@ -1,4 +1,4 @@
-# 🎯 Termo Clone
+# LetrAZ
 
 Um jogo de adivinhação de palavras para a web, inspirado no popular jogo **Wordle** e em sua versão brasileira, o **Termo**.  
 O objetivo é adivinhar uma palavra secreta de **cinco letras** em até **cinco tentativas**.
@@ -65,8 +65,8 @@ Siga os passos abaixo para rodar o projeto localmente:
 ### 1. Clone o Repositório
 
 ```bash
-git clone <url-do-seu-repositorio>
-cd <diretorio-do-projeto>
+git clone https://github.com/Gabriel-Barboza/letrAZ.git
+cd letrAZ
 ```
 
 ### 2. Instale as Dependências
