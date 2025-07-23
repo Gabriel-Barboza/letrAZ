@@ -3,20 +3,27 @@ import { state, saveState } from "./gameState";
 import * as board from "./board";
 import { PLAYS, LETTERS } from "./types";
 
-const menssagem = document.getElementById("message")!;
+const toastContainer = document.createElement('div');
+document.body.appendChild(toastContainer);
 let messageTimer: number;
 
-/** Mostra uma mensagem temporária para o usuário (ex: "Palavra inválida!"). */
-function showMessage(msg: string, duration: number = 2000) {
-    menssagem.textContent = msg;
-    menssagem.style.opacity = '1';
+function showMessage(msg: string, type: 'success' | 'error' = 'error', duration: number = 2000) {
+    // Configura o toast com as classes do seu CSS
+    toastContainer.className = 'toast-container'; // Reseta as classes
+    toastContainer.classList.add(type); // Adiciona o tipo (success ou error)
+    toastContainer.textContent = msg;
 
+    // Torna o toast visível
+    toastContainer.classList.add('visible');
+
+    // Limpa o timer anterior para evitar que o toast suma antes da hora
     clearTimeout(messageTimer);
+
+    // Agenda o desaparecimento do toast
     messageTimer = setTimeout(() => {
-        menssagem.style.opacity = '0';
+        toastContainer.classList.remove('visible');
     }, duration);
 }
-
 /** Colore a linha da tentativa e o teclado virtual com base no resultado. */
 export function colorizeGuess(guess: string, row: number) {
     const target = palavraCerta.split("");
@@ -62,12 +69,12 @@ export function submitGuess() {
             .join('');
 
     if (guess.length < LETTERS) {
-        showMessage("Digite 5 letras.");
+        showMessage("Digite 5 letras.", 'error');
         return;
     }
 
     if (!tentativasValidasFiltradas.includes(guess) && !respostasFiltradas.includes(guess)) {
-        showMessage("Palavra inválida!");
+        showMessage("Parabéns, você acertou!", 'success'); 
         return;
     }
 
@@ -124,6 +131,8 @@ function updateAndSaveStats(didWin: boolean) {
 export function restoreBoard() {
     // Para cada palpite salvo no estado...
     state.gameState.guesses.forEach((guess, rowIndex) => {
+        if (!guess) return; // Pula se o palpite for nulo/vazio
+        
         // ...preenche as letras na linha correspondente
         for (let i = 0; i < LETTERS; i++) {
             board.updateBox(guess[i] || "", rowIndex, i);
@@ -131,20 +140,9 @@ export function restoreBoard() {
         // ...e aplica as cores corretas
         colorizeGuess(guess, rowIndex);
     });
-
-    // ADICIONE: Restaura as letras da linha atual (em progresso)
-    if (!state.gameState.isGameOver && state.gameState.currentRow < PLAYS) {
-        const currentRowElement = document.querySelector(`.row-${state.gameState.currentRow}`);
-        if (currentRowElement) {
-            for (let i = 0; i < LETTERS; i++) {
-                const box = currentRowElement.children[i] as HTMLElement;
-                const letter = box.textContent || '';
-                if (letter) {
-                    board.updateBox(letter, state.gameState.currentRow, i);
-                }
-            }
-        }
-    }
+    
+    // ATUALIZA o estilo de todas as linhas com base no estado carregado
+    board.atualizarEstilosDasLinhas(state.gameState.currentRow);
 
     // Se o jogo já terminou ao carregar, esconde o cursor
     if (state.gameState.isGameOver) {

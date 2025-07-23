@@ -54,39 +54,20 @@ export function updateBox(letter: string, row: number, col: number) {
 }
 export function atualizarEstilosDasLinhas(currentRow: number) {
     for (let i = 0; i < PLAYS; i++) {
+        // PULA completamente as linhas que já foram jogadas e coloridas.
+        if (i < currentRow) {
+            continue;
+        }
+
         const linha = document.querySelector(`.row-${i}`)!;
         for (let j = 0; j < LETTERS; j++) {
             const bloco = linha.children[j] as HTMLElement;
-            const hasCursor = bloco.classList.contains('cursor');
             
-            // Não alterar linhas que já foram jogadas (têm cores de feedback)
-            if (i < currentRow) {
-                // Apenas restaura o cursor se tinha
-                if (hasCursor) {
-                    bloco.classList.add('cursor');
-                }
-                continue; // Pula para o próximo, mantendo as cores do feedback
-            }
-
+            // Lógica simplificada:
             if (i === currentRow) {
-                // Linha atual - só adiciona classes se não tem cores de feedback
-                if (!bloco.classList.contains('bg-green-500') && 
-                    !bloco.classList.contains('bg-yellow-500') && 
-                    !bloco.classList.contains('bg-gray-700')) {
-                    
-                    // Remove classes de linhas inativas e adiciona as ativas
-                    bloco.classList.remove('box-inactive');
-                    bloco.classList.add('box', 'box-active');
-                }
-            } else if (i > currentRow) {
-                // Linhas futuras - remove classes ativas e adiciona inativas
-                bloco.classList.remove('box-active', 'cursor');
-                bloco.classList.add('box', 'box-inactive');
-            }
-
-            // Restaura cursor se tinha
-            if (hasCursor) {
-                bloco.classList.add('cursor');
+                bloco.className = "box box-active"; // Define a linha atual como ativa
+            } else {
+                bloco.className = "box box-inactive"; // Define as futuras como inativas
             }
         }
     }
