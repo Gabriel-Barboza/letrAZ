@@ -1,92 +1,143 @@
-
 import './style.css';
 
-// Importa o estado central e a função de inicialização
-import { state, initializeState, saveState } from './gameState'; // Adicione saveState aqui
-
-
-// Importa os tipos e constantes
-import { LETTERS } from './types';
-
-// Importa os módulos que cuidam do tabuleiro, lógica do jogo e teclado
-import * as board from './board';
-import { submitGuess, restoreBoard } from './game';
-import { createKeyboard } from './keyboard';
-
 // ===================================================================
-// ===== INICIALIZAÇÃO DO JOGO =======================================
+// ===== PONTO DE ENTRADA DA APLICAÇÃO (MAIN) ========================
 // ===================================================================
+// Responsável por orquestrar a inicialização do jogo e conectar
+// os diferentes módulos (estado, UI, lógica).
 
-// 1. Prepara o estado: carrega do localStorage ou cria um novo para o dia
+// Core
+import { state, initializeState, saveState } from './core/state';
+import { palavraCerta } from './core/word-service';
+import * as gameLogic from './core/game-logic';
+
+// Components
+import * as board from './components/board';
+import * as keyboard from './components/keyboard';
+import * as toast from './components/toast';
+
+// Config
+import { LETTERS } from './config';
+
+// --- INICIALIZAÇÃO ---
 initializeState();
 
-// 2. Cria os elementos visuais do tabuleiro e do teclado
-board.createBoard(handleboxClick);
-createKeyboard(handleKeyPress);
+board.createBoard(handleBoxClick);
+keyboard.createKeyboard(handleVirtualKeyPress);
 
-// 3. Restaura o visual do tabuleiro caso haja progresso salvo
-restoreBoard();
+restoreGame();
 
-// 4. Posiciona o cursor visual na posição correta (inicial ou carregada)
-board.CurrentBox(state.gameState.currentCol, state.gameState.currentRow);
+// --- HANDLERS DE INPUT ---
 
-// 5. Adiciona o "ouvinte" principal para as teclas do teclado físico
-document.addEventListener("keydown", handleKeyPress);
-
-
-// ===================================================================
-// ===== FUNÇÕES DE INPUT (HANDLERS) =================================
-// ===================================================================
-
-/** Lida com os inputs do teclado físico e virtual. */
-function handleKeyPress(event: KeyboardEvent) {
-  // Se o jogo acabou, bloqueia qualquer ação.
-  if (state.gameState.isGameOver) return;
-
-  const key = event.key.toLowerCase();
-
-  if (key === "enter") {
-    submitGuess();
-    return;
-  }
-
-  if (key === "backspace") {
-    // A lógica de apagar é simplificada: sempre apaga a letra anterior ao cursor.
-    if (state.gameState.currentCol > 0) {
-      state.gameState.currentCol--;
-      board.updateBox("", state.gameState.currentRow, state.gameState.currentCol);
-      
-      // ADICIONE ESTA LINHA: Salva após apagar
-      saveState();
-    }
-  } else if (key === "arrowleft") {
-    if (state.gameState.currentCol > 0) {
-      state.gameState.currentCol--;
-    }
-  } else if (key === "arrowright") {
-    // Permite mover o cursor até a última caixa, mas não além.
-    if (state.gameState.currentCol < LETTERS -1) {
-      state.gameState.currentCol++;
-    }
-  } else if (/^[a-z]$/.test(key) && state.gameState.currentCol < LETTERS) {
-    // Digita a letra e avança o cursor.
-    board.updateBox(key, state.gameState.currentRow, state.gameState.currentCol);
-    state.gameState.currentCol++;
-    
-    // ADICIONE ESTA LINHA: Salva após digitar uma letra
-    saveState();
-  }
-  
-  // Atualiza a posição do cursor visual após qualquer movimento.
-  board.CurrentBox(state.gameState.currentCol, state.gameState.currentRow);
+/** Lida com cliques nas caixas do tabuleiro. */
+function handleBoxClick(row: number, col: number) {
+    if (state.gameState.isGameOver || row !== state.gameState.currentRow) return;
+    state.gameState.currentCol = col;
+    board.updateCursorPosition(state.gameState.currentRow, state.gameState.currentCol);
 }
 
-/** Lida com o clique do mouse em uma das caixas do tabuleiro. */
-function handleboxClick(row: number, col: number) {
-  // Se o jogo acabou ou o clique não for na linha atual, bloqueia a ação.
-  if (state.gameState.isGameOver || row !== state.gameState.currentRow) return;
-
-  // Atualiza a posição da coluna e o cursor visual.
-  state.gameState.currentCol = col;
-  board.CurrentBox(state.gameState.currentCol, state.gameState.currentRow);
+/** Lida com cliques no teclado virtual. */
+function handleVirtualKeyPress(key: string) {
+    handleKeyPress(key);
 }
+
+/** Lida com o teclado físico. */
+document.addEventListener("keydown", (event: KeyboardEvent) => {
+    handleKeyPress(event.key);
+});
+
+/**
+ * Processa uma tecla pressionada (física ou virtual).
+ * Esta é a função central que reage ao input do usuário.
+ */
+function handleKeyPress(key: string) {
+    if (state.gameState.isGameOver) return;
+
+    const currentGuess = state.gameState.guesses[state.gameState.currentRow] || '';
+
+    if (key.toLowerCase() === "enter") {
+        submitGuess();
+        return;
+    }
+
+    if (key.toLowerCase() === "backspace") {
+        if (state.gameState.currentCol > 0) {
+            state.gameState.currentCol--;
+            const newGuess = currentGuess.slice(0, -1);
+            state.gameState.guesses[state.gameState.currentRow] = newGuess;
+            board.updateBox('', state.gameState.currentRow, state.gameState.currentCol);
+            saveState();
+        }
+    } else if (/^[a-z]$/.test(key.toLowerCase()) && state.gameState.currentCol < LETTERS) {
+        const newGuess = currentGuess + key.toLowerCase();
+        state.gameState.guesses[state.gameState.currentRow] = newGuess;
+        board.updateBox(key, state.gameState.currentRow, state.gameState.currentCol);
+        state.gameState.currentCol++;
+        saveState();
+    }
+
+    board.updateCursorPosition(state.gameState.currentRow, state.gameState.currentCol);
+}
+
+// --- LÓGICA DE SUBMISSÃO E RESTAURAÇÃO ---
+
+/** Submete a tentativa atual para verificação. */
+// Arquivo: main.ts
+
+function submitGuess() {
+    const guess = state.gameState.guesses[state.gameState.currentRow] || '';
+    const validation = gameLogic.validateGuess(guess);
+
+    if (!validation.isValid) {
+        toast.showMessage(validation.message!, 1500, 'error');
+        return;
+    }
+
+    // 1. Guarda a linha que foi jogada.
+    const playedRow = state.gameState.currentRow;
+
+    // 2. Processa a lógica do jogo e atualiza o estado PRIMEIRO.
+    const result = gameLogic.processGuess(guess);
+    const statuses = gameLogic.checkGuess(guess);
+
+    // 3. AGORA, com o estado finalizado, atualiza a parte visual.
+    board.colorizeRow(statuses, playedRow); // Colore a linha que foi jogada.
+    statuses.forEach((status, index) => {
+        keyboard.updateKeyStatus(guess[index], status);
+    });
+
+    // 4. Exibe o resultado da jogada.
+    if (result.outcome === 'win') {
+        toast.showMessage('Parabéns, você acertou!', 3000, 'success');
+    } else if (result.outcome === 'loss') {
+        toast.showMessage(`Fim de jogo! A palavra era: ${palavraCerta}`, 5000, 'error');
+    } else {
+        // Se o jogo continua, prepara a PRÓXIMA linha.
+        board.updateRowStyles(state.gameState.currentRow);
+        board.updateCursorPosition(state.gameState.currentRow, state.gameState.currentCol);
+    }
+}
+
+/** Restaura o estado visual do jogo a partir dos dados salvos. */
+function restoreGame() {
+    // Restaura as linhas que já foram jogadas
+    state.gameState.guesses.forEach((guess, row) => {
+        // Preenche as letras da tentativa
+        for (let col = 0; col < guess.length; col++) {
+            board.updateBox(guess[col], row, col);
+        }
+        // Calcula os status e colore a linha e o teclado
+        const statuses = gameLogic.checkGuess(guess);
+        board.colorizeRow(statuses, row);
+        statuses.forEach((status, index) => {
+            keyboard.updateKeyStatus(guess[index], status);
+        });
+    });
+
+    // Se o jogo não terminou, prepara a próxima linha para ser a ativa
+    if (!state.gameState.isGameOver) {
+        board.updateRowStyles(state.gameState.currentRow);
+        board.updateCursorPosition(state.gameState.currentRow, state.gameState.currentCol);
+    }
+}
+

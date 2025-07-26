@@ -30,18 +30,18 @@
 
 
 .keyboard-key.correct {
-  background-color: #6aaa64; /* Verde */
-  color: white;
+    background-color: #6aaa64 !important; /* Verde */
+    color: white !important;
 }
 
 .keyboard-key.present {
-  background-color: #c9b458; /* Amarelo */
-  color: white;
+    background-color: #c9b458 !important; /* Amarelo */
+    color: white !important;
 }
 
 .keyboard-key.absent {
-  background-color: #787c7e; /* Cinza escuro */
-  color: white;
+    background-color: #787c7e !important; /* Cinza escuro */
+    color: white !important;
 }
 
 .toast-container {
@@ -73,4 +73,22 @@
 
 .toast-container.error {
   @apply bg-red-500;
+}
+
+.box.correct {
+  background-color: #538d4e; /* Verde */
+  border-color: #538d4e;
+  color: white;
+}
+
+.box.present {
+  background-color: #b59f3b; /* Amarelo */
+  border-color: #b59f3b;
+  color: white;
+}
+
+.box.absent {
+  background-color: #3a3a3c; /* Cinza escuro */
+  border-color: #3a3a3c;
+  color: white;
 }

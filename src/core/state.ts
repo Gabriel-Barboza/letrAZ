@@ -1,14 +1,13 @@
-// gameState.ts
+// ===================================================================
+// ===== GERENCIADOR DE ESTADO =======================================
+// ===================================================================
+// Responsável por criar, carregar e salvar o estado do jogo,
+// usando o localStorage para persistência.
 
-import type { SaveData } from './types';
+import type { SaveData } from '../types';
+import { getTodayDateString } from '../utils/date';
 
-
-// Função helper para pegar a data de hoje
-function getTodayDateString(): string {
-  return new Date().toISOString().split('T')[0];
-}
-
-// Cria o estado inicial para um jogo novo
+/** Cria o estado inicial para um novo jogo. */
 function createInitialState(): SaveData {
   return {
     stats: {
@@ -33,7 +32,10 @@ function createInitialState(): SaveData {
 export let state: SaveData;
 // ==========================================================
 
-// Função que carrega do localStorage e prepara o jogo
+/**
+ * Carrega o estado do localStorage. Se for um novo dia, reinicia o
+ * estado do jogo, mas mantém as estatísticas.
+ */
 export function initializeState() {
   const savedDataString = localStorage.getItem('gameData');
   
@@ -55,7 +57,7 @@ export function initializeState() {
   }
 }
 
-// Função única para salvar o estado atual no localStorage
+/** Salva o estado atual no localStorage. */
 export function saveState() {
   localStorage.setItem('gameData', JSON.stringify(state));
 }

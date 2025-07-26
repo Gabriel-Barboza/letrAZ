@@ -1,7 +1,8 @@
-import { palavraCerta, tentativasValidasFiltradas, respostasFiltradas } from "./words";
-import { state, saveState } from "./gameState";
-import * as board from "./board";
-import { PLAYS, LETTERS } from "./types";
+import { palavraCerta, tentativasValidas } from "./core/word-service";
+import { state, saveState } from "./core/state";
+import * as board from "./components/board";
+import * as gameLogic from "./core/game-logic";
+import { PLAYS, LETTERS } from "./config";
 
 const toastContainer = document.createElement('div');
 document.body.appendChild(toastContainer);
@@ -26,42 +27,16 @@ function showMessage(msg: string, type: 'success' | 'error' = 'error', duration:
 }
 /** Colore a linha da tentativa e o teclado virtual com base no resultado. */
 export function colorizeGuess(guess: string, row: number) {
-    const target = palavraCerta.split("");
-    const result: ("correct" | "present" | "absent")[] = Array(LETTERS).fill("absent");
+    // Usa a lógica de verificação do gameLogic
+    const statuses = gameLogic.checkGuess(guess);
+    
+    // Aplica as cores no tabuleiro usando a função do board
+    board.colorizeRow(statuses, row);
 
-    // Lógica de coloração (Passo 1: Corretos, Passo 2: Presentes)
+    // Atualiza as cores do teclado
     for (let i = 0; i < LETTERS; i++) {
-        if (guess[i] === target[i]) {
-            result[i] = "correct";
-            target[i] = "";
-        }
-    }
-    for (let i = 0; i < LETTERS; i++) {
-        if (result[i] === "correct") continue;
-        const idx = target.indexOf(guess[i]);
-        if (idx !== -1) {
-            result[i] = "present";
-            target[idx] = "";
-        }
-    }
-
-    // Aplica as cores na linha do tabuleiro
-    const rowEl = document.querySelector(`.row-${row}`)!;
-    for (let i = 0; i < LETTERS; i++) {
-        const box = rowEl.children[i] as HTMLElement;
-        box.classList.remove("box-active", "box-inactive");
-
-        if (result[i] === "correct") {
-            box.classList.add("bg-green-500", "text-white", "border-none");
-        } else if (result[i] === "present") {
-            box.classList.add("bg-yellow-500", "text-white", "border-none");
-        } else {
-            box.classList.add("bg-gray-700", "text-white", "border-none");
-        }
-
-        // ADICIONE ESTA PARTE: Atualiza as cores do teclado
         const letter = guess[i].toLowerCase();
-        const status = result[i];
+        const status = statuses[i];
         const keyElement = document.querySelector(`.keyboard-key[data-key="${letter}"]`) as HTMLElement;
 
         if (keyElement) {
@@ -82,28 +57,33 @@ export function colorizeGuess(guess: string, row: number) {
 
 /** Função principal chamada quando o jogador aperta Enter. */
 export function submitGuess() {
-    const guess = state.gameState.guesses[state.gameState.currentRow] ||
-        Array.from(document.querySelector(`.row-${state.gameState.currentRow}`)!.children)
-            .map(box => box.textContent || '')
-            .join('');
+    // 1. Obter a tentativa ATUAL diretamente do DOM.
+    const currentRowElement = document.querySelector(`.row-${state.gameState.currentRow}`);
+    if (!currentRowElement) return;
 
+    const guess = Array.from(currentRowElement.children)
+        .map(box => box.textContent || '')
+        .join('')
+        .toUpperCase();
+
+    // 2. Validar a tentativa.
     if (guess.length < LETTERS) {
         showMessage("Digite 5 letras.", 'error');
         return;
     }
 
-    if (!tentativasValidasFiltradas.includes(guess) && !respostasFiltradas.includes(guess)) {
-        showMessage("Palavra Invalida!", 'error'); 
+    if (!tentativasValidas.includes(guess)) {
+        showMessage("Palavra inválida!", 'error');
         return;
     }
 
-    // Atualiza o estado com a tentativa
+    // 3. Processar a tentativa válida.
     state.gameState.guesses[state.gameState.currentRow] = guess;
     colorizeGuess(guess, state.gameState.currentRow);
 
-    // VITÓRIA
+    // 4. Verificar condição de vitória.
     if (guess === palavraCerta) {
-        showMessage("Parabéns, você acertou!", 'success'); 
+        showMessage("Parabéns, você acertou!", 'success');
         state.gameState.isGameOver = true;
         state.gameState.isComplete = true;
         updateAndSaveStats(true);
@@ -111,11 +91,11 @@ export function submitGuess() {
         return;
     }
 
-    // Se não ganhou, passa para a próxima linha
+    // 5. Passar para a próxima linha.
     state.gameState.currentRow++;
     state.gameState.currentCol = 0;
 
-    // DERROTA (acabaram as tentativas)
+    // 6. Verificar condição de derrota.
     if (state.gameState.currentRow >= PLAYS) {
         showMessage(`Fim de jogo! A palavra era: ${palavraCerta}`);
         state.gameState.isGameOver = true;
@@ -125,10 +105,10 @@ export function submitGuess() {
         return;
     }
 
-    // Se o jogo continua, salva o progresso e prepara a próxima linha
+    // 7. Se o jogo continua, salvar e preparar a próxima linha.
     saveState();
-    board.CurrentBox(state.gameState.currentCol, state.gameState.currentRow);
-    board.atualizarEstilosDasLinhas(state.gameState.currentRow); // Atualiza o estilo da nova linha
+    board.updateRowStyles(state.gameState.currentRow);
+    board.updateCursorPosition(state.gameState.currentRow, state.gameState.currentCol);
 }
 
 /** Atualiza as estatísticas do jogador e salva o estado. */
@@ -151,7 +131,6 @@ export function restoreBoard() {
     // Itera sobre cada posição de linha possível no tabuleiro
     for (let i = 0; i < PLAYS; i++) {
         const guess = state.gameState.guesses[i];
-        const linha = document.querySelector(`.row-${i}`) as HTMLElement;
 
         // CASO 1: Existe um palpite salvo para esta linha.
         // Isso significa que a linha foi JOGADA e deve ser colorida.
@@ -161,23 +140,13 @@ export function restoreBoard() {
                 board.updateBox(guess[j] || '', i, j);
             }
             // ...e aplica as cores corretas do resultado (verde, amarelo, etc.).
-            colorizeGuess(guess, i);
-        }
-        // CASO 2: NÃO existe palpite, e esta é a linha ativa (jogo em progresso).
-        else if (i === state.gameState.currentRow && !state.gameState.isGameOver) {
-            for (let j = 0; j < LETTERS; j++) {
-                const bloco = linha.children[j] as HTMLElement;
-                bloco.className = 'box box-active';
-            }
-        }
-        // CASO 3: Todas as outras (linhas futuras, ou linhas vazias após o fim do jogo).
-        else {
-            for (let j = 0; j < LETTERS; j++) {
-                const bloco = linha.children[j] as HTMLElement;
-                bloco.className = 'box box-inactive';
-            }
+            const statuses = gameLogic.checkGuess(guess);
+            board.colorizeRow(statuses, i);
         }
     }
+
+    // Atualiza os estilos das linhas (ativa/inativa)
+    board.updateRowStyles(state.gameState.currentRow);
 
     // Por fim, cuida da visibilidade e posição do cursor
     if (state.gameState.isGameOver) {
@@ -185,6 +154,6 @@ export function restoreBoard() {
         document.querySelector('.cursor')?.classList.remove('cursor');
     } else {
         // Se o jogo continua, posiciona o cursor corretamente.
-        board.CurrentBox(state.gameState.currentCol, state.gameState.currentRow);
+        board.updateCursorPosition(state.gameState.currentRow, state.gameState.currentCol);
     }
 }
