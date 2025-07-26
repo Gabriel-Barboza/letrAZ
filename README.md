@@ -43,17 +43,30 @@ Este projeto foi desenvolvido com **TypeScript**, **Vite** e **Tailwind CSS**.
 
 ## 📂 Estrutura do Projeto
 
+A estrutura de arquivos do `letrAZ` foi organizada para separar responsabilidades, facilitando a manutenção e escalabilidade.
+
 ```
 📁 src/
 │
-├── 📄 main.ts          # Ponto de entrada da aplicação
-├── 📄 game.ts          # Lógica central do jogo (validação, dicas, salvamento)
-├── 📄 board.ts         # Criação e manipulação do tabuleiro
-├── 📄 keyboard.ts      # Teclado virtual e eventos de clique
-├── 📄 gameState.ts     # Estado do jogo e estatísticas do jogador
-├── 📄 words.ts         # Lista de palavras e seleção da palavra do dia
-├── 📄 types.ts         # Tipos e constantes globais
-├── 📄 style.css        # Estilos base com Tailwind
+├── 📄 main.ts           # Ponto de entrada: inicializa o jogo e registra os eventos.
+├── 📄 game.ts           # Orquestrador principal: conecta a interface do usuário com a lógica do jogo.
+├── 📄 config.ts         # Constantes globais (número de letras, tentativas, etc.).
+├── 📄 types.ts          # Definições de tipos e interfaces (ex: LetterStatus, GameState).
+│
+├── 📁 components/       # Módulos que manipulam diretamente o DOM.
+│   ├── 📄 board.ts      # Funções para criar, atualizar e colorir o tabuleiro.
+│   ├── 📄 keyboard.ts   # Lógica do teclado virtual, incluindo atualização de cores das teclas.
+│   └── 📄 toast.ts      # Exibição de notificações (ex: "Palavra inválida").
+│
+├── 📁 core/             # Núcleo da lógica de negócio do jogo.
+│   ├── 📄 game-logic.ts # Contém as regras centrais (comparar palavras, definir status das letras).
+│   ├── 📄 state.ts      # Gerencia o estado completo do jogo (tentativas, letras, etc.) e o salva no localStorage.
+│   └── 📄 word-service.ts # Responsável por carregar a lista de palavras e selecionar a palavra do dia.
+│
+├── � utils/            # Funções utilitárias reutilizáveis.
+│   └── 📄 date.ts       # Funções para lidar com datas, usado para a palavra do dia.
+│
+└── 📄 style.css         # Estilos base e configuração do Tailwind CSS.
 ```
 
 ---
