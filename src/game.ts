@@ -49,7 +49,7 @@ export function colorizeGuess(guess: string, row: number) {
     const rowEl = document.querySelector(`.row-${row}`)!;
     for (let i = 0; i < LETTERS; i++) {
         const box = rowEl.children[i] as HTMLElement;
-        box.classList.remove("box-active", "box-inactive"); // Importante: remove o estado ativo
+        box.classList.remove("box-active", "box-inactive");
 
         if (result[i] === "correct") {
             box.classList.add("bg-green-500", "text-white", "border-none");
@@ -58,8 +58,27 @@ export function colorizeGuess(guess: string, row: number) {
         } else {
             box.classList.add("bg-gray-700", "text-white", "border-none");
         }
+
+        // ADICIONE ESTA PARTE: Atualiza as cores do teclado
+        const letter = guess[i].toLowerCase();
+        const status = result[i];
+        const keyElement = document.querySelector(`.keyboard-key[data-key="${letter}"]`) as HTMLElement;
+
+        if (keyElement) {
+            // Remove classes anteriores
+            keyElement.classList.remove('correct', 'present', 'absent');
+            
+            if (status === 'correct') {
+                keyElement.classList.add('correct');
+            } else if (status === 'present' && !keyElement.classList.contains('correct')) {
+                keyElement.classList.add('present');
+            } else if (status === 'absent' && !keyElement.classList.contains('correct') && !keyElement.classList.contains('present')) {
+                keyElement.classList.add('absent');
+            }
+        }
     }
 }
+
 
 /** Função principal chamada quando o jogador aperta Enter. */
 export function submitGuess() {
