@@ -60,20 +60,31 @@ function handleKeyPress(key: string) {
         return;
     }
 
-    if (key.toLowerCase() === "backspace") {
-        if (state.gameState.currentCol > 0) {
+ if (key.toLowerCase() === "backspace") {
+        // A condição foi corrigida (removido o '&&' extra).
+        // Isso só permite apagar se o cursor não estiver na primeira posição.
+        if (state.gameState.currentCol > 0 && currentGuess[state.gameState.currentCol] === " ")  {
+            // 1. Move o cursor uma posição para trás.
             state.gameState.currentCol--;
+            
+            // 2. Remove o último caractere da string da tentativa atual.
             const newGuess = currentGuess.slice(0, -1);
             state.gameState.guesses[state.gameState.currentRow] = newGuess;
+            
+            // 3. Limpa a caixa visualmente na nova posição do cursor.
             board.updateBox('', state.gameState.currentRow, state.gameState.currentCol);
-            saveState();
+            
+            // 4. Salva o estado.
+           
         }
+     
+     
     } else if (/^[a-z]$/.test(key.toLowerCase()) && state.gameState.currentCol < LETTERS) {
         const newGuess = currentGuess + key.toLowerCase();
         state.gameState.guesses[state.gameState.currentRow] = newGuess;
         board.updateBox(key, state.gameState.currentRow, state.gameState.currentCol);
         state.gameState.currentCol++;
-        saveState();
+        
     }
 
     board.updateCursorPosition(state.gameState.currentRow, state.gameState.currentCol);
@@ -99,7 +110,7 @@ function submitGuess() {
     // 2. Processa a lógica do jogo e atualiza o estado PRIMEIRO.
     const result = gameLogic.processGuess(guess);
     const statuses = gameLogic.checkGuess(guess);
-
+    saveState(); // Salva o estado atualizado.
     // 3. AGORA, com o estado finalizado, atualiza a parte visual.
     board.colorizeRow(statuses, playedRow); // Colore a linha que foi jogada.
     statuses.forEach((status, index) => {
