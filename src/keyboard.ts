@@ -51,3 +51,21 @@ export function createKeyboard(handleKeyPress: (event: KeyboardEvent) => void) {
         }
     });
 }
+    export function updateKeyStatus(key: string, status: 'correct' | 'present' | 'absent') {
+    const keyElement = tecladoContainer.querySelector(`[data-key="${key.toLowerCase()}"]`) as HTMLElement;
+    if (!keyElement) return;
+
+    // Prioridade de status: não rebaixa uma tecla que já está correta.
+    if (keyElement.classList.contains('correct')) return;
+    
+    // Não rebaixa uma tecla presente para ausente.
+    if (keyElement.classList.contains('present') && status === 'absent') return;
+
+    // Remove status de cor antigos para aplicar o novo.
+    keyElement.classList.remove('present', 'absent');
+
+    // Adiciona a classe de status correspondente ('correct', 'present', ou 'absent').
+    // O seu style.css cuidará da cor com base nessas classes.
+    keyElement.classList.add(status);
+
+}

@@ -2,7 +2,7 @@ import { palavraCerta, tentativasValidasFiltradas, respostasFiltradas } from "./
 import { state, saveState } from "./gameState";
 import * as board from "./board";
 import { PLAYS, LETTERS } from "./types";
-
+import * as keyboard from "./keyboard";
 const toastContainer = document.createElement('div');
 document.body.appendChild(toastContainer);
 let messageTimer: number;
@@ -45,8 +45,14 @@ export function colorizeGuess(guess: string, row: number) {
         }
     }
 
+
   board.colorizeRow(result, row);
-    
+        for (let i = 0; i < LETTERS; i++) {
+        const letter = guess[i];
+        const status = result[i];
+        keyboard.updateKeyStatus(letter, status);
+    }
+
 }
 
 /** Função principal chamada quando o jogador aperta Enter. */
