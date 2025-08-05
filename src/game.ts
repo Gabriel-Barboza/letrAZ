@@ -45,20 +45,8 @@ export function colorizeGuess(guess: string, row: number) {
         }
     }
 
-    // Aplica as cores na linha do tabuleiro
-    const rowEl = document.querySelector(`.row-${row}`)!;
-    for (let i = 0; i < LETTERS; i++) {
-        const box = rowEl.children[i] as HTMLElement;
-        box.classList.remove("box-active"); // Importante: remove o estado ativo
-
-        if (result[i] === "correct") {
-            box.classList.add("bg-green-500", "text-white", "border-none");
-        } else if (result[i] === "present") {
-            box.classList.add("bg-yellow-500", "text-white", "border-none");
-        } else {
-            box.classList.add("bg-gray-700", "text-white", "border-none");
-        }
-    }
+  board.colorizeRow(result, row);
+    
 }
 
 /** Função principal chamada quando o jogador aperta Enter. */
@@ -74,7 +62,7 @@ export function submitGuess() {
     }
 
     if (!tentativasValidasFiltradas.includes(guess) && !respostasFiltradas.includes(guess)) {
-        showMessage("Parabéns, você acertou!", 'success'); 
+        showMessage("Palavra invalida.", 'error');
         return;
     }
 
@@ -84,24 +72,27 @@ export function submitGuess() {
 
     // VITÓRIA
     if (guess === palavraCerta) {
-        showMessage("Parabéns, você acertou!");
+         showMessage("Parabéns, você acertou!", 'success'); 
         state.gameState.isGameOver = true;
         state.gameState.isComplete = true;
-        updateAndSaveStats(true);
+        updateAndSaveStats(true); 
         document.querySelector(".cursor")?.classList.remove("cursor");
         return;
     }
+
 
     // Se não ganhou, passa para a próxima linha
     state.gameState.currentRow++;
     state.gameState.currentCol = 0;
 
     // DERROTA (acabaram as tentativas)
-    if (state.gameState.currentRow >= PLAYS) {
-        showMessage(`Fim de jogo! A palavra era: ${palavraCerta}`);
+  if (state.gameState.currentRow >= PLAYS) {
+        showMessage(`Fim de jogo! A palavra era: ${palavraCerta}` , 'error');
         state.gameState.isGameOver = true;
         state.gameState.isComplete = true;
-        updateAndSaveStats(false);
+        updateAndSaveStats(false); // Salva o estado final
+
+       
         document.querySelector(".cursor")?.classList.remove("cursor");
         return;
     }
@@ -118,13 +109,13 @@ function updateAndSaveStats(didWin: boolean) {
     if (didWin) {
         state.stats.wins++;
         state.stats.currentStreak++;
-        state.stats.maxStreak = Math.max(state.stats.maxStreak, state.stats.currentStreak);
-        // +1 porque currentRow é base 0 (0-4), e as tentativas são (1-5)
-        state.stats.winDistribution[state.gameState.currentRow + 1]++;
+        if (state.stats.currentStreak > state.stats.maxStreak) {
+            state.stats.maxStreak = state.stats.currentStreak;
+        }
     } else {
         state.stats.currentStreak = 0;
     }
-    saveState(); // Salva o estado final com as estatísticas atualizadas
+    saveState(); // Salva o estado completo, incluindo as estatísticas
 }
 
 /** Restaura o visual do tabuleiro com base no estado carregado. */
@@ -134,11 +125,15 @@ export function restoreBoard() {
         if (!guess) return; // Pula se o palpite for nulo/vazio
         
         // ...preenche as letras na linha correspondente
-        for (let i = 0; i < LETTERS; i++) {
+        for (let i = 0; i < guess.length; i++) {
             board.updateBox(guess[i] || "", rowIndex, i);
         }
-        // ...e aplica as cores corretas
-        colorizeGuess(guess, rowIndex);
+
+        // ✅ CORREÇÃO: Colore apenas as linhas que já foram jogadas (não a linha atual)
+        // Isso garante que todas as tentativas anteriores sejam coloridas ao recarregar.
+        if (rowIndex < state.gameState.currentRow || state.gameState.isComplete) {
+            colorizeGuess(guess, rowIndex);
+        }
     });
     
     // ATUALIZA o estilo de todas as linhas com base no estado carregado
