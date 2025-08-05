@@ -106,7 +106,7 @@ export function submitGuess() {
     // Se o jogo continua, salva o progresso e prepara a próxima linha
     saveState();
     board.CurrentBox(state.gameState.currentCol, state.gameState.currentRow);
-    board.atualizarEstilosDasLinhas(state.gameState.currentRow); // Atualiza o estilo da nova linha
+    board.updateRowStyles(state.gameState.currentRow); // Atualiza o estilo da nova linha
 }
 
 /** Atualiza as estatísticas do jogador e salva o estado. */
@@ -143,7 +143,7 @@ export function restoreBoard() {
     });
     
     // ATUALIZA o estilo de todas as linhas com base no estado carregado
-    board.atualizarEstilosDasLinhas(state.gameState.currentRow);
+    board.updateRowStyles(state.gameState.currentRow);
 
     // Se o jogo já terminou ao carregar, esconde o cursor
     if (state.gameState.isGameOver) {

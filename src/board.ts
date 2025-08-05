@@ -73,7 +73,7 @@ export function colorizeRow(statuses: ("correct" | "present" | "absent")[], row:
         }
     }
 }
-export function atualizarEstilosDasLinhas(currentRow: number) {
+export function updateRowStyles(currentRow: number) {
     for (let i = 0; i < PLAYS; i++) {
         const linha = document.querySelector(`.row-${i}`)!;
         const primeiroBloco = linha.children[0] as HTMLElement;
