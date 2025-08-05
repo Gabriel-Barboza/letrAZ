@@ -18,10 +18,10 @@ if (!state.gameState.isGameOver) {
 }
 document.addEventListener("keydown", handleKeyPress);
 
-// Strategy Functions para cada tipo de tecla
+
 function enterStrategy(): void {
     submitGuess();
-    // Não precisa atualizar cursor aqui - submitGuess já faz isso
+
 }
 
 function backspaceStrategy(): void {
@@ -34,21 +34,21 @@ function backspaceStrategy(): void {
     } else if (state.gameState.currentCol >= 0 && caixa.textContent !== "") {
         board.updateBox("", state.gameState.currentRow, state.gameState.currentCol);
     }
-    // CURSOR SERÁ ATUALIZADO NO FINAL do handleKeyPress
+
 }
 
 function arrowLeftStrategy(): void {
     if (state.gameState.currentCol > 0) {
         state.gameState.currentCol--;
     }
-    // CURSOR SERÁ ATUALIZADO NO FINAL do handleKeyPress
+
 }
 
 function arrowRightStrategy(): void {
     if (state.gameState.currentCol < LETTERS - 1) {
         state.gameState.currentCol++;
     }
-    // CURSOR SERÁ ATUALIZADO NO FINAL do handleKeyPress
+
 }
 
 function letterStrategy(key: string): void {
@@ -58,7 +58,6 @@ function letterStrategy(key: string): void {
             state.gameState.currentCol++;
         }
     }
-    // CURSOR SERÁ ATUALIZADO NO FINAL do handleKeyPress
 }
 
 // Dicionário de estratégias
@@ -92,7 +91,7 @@ function handleKeyPress(event: KeyboardEvent) {
         return;
     }
     
-     if (!state.gameState.isGameOver) {
+    if (!state.gameState.isGameOver) {
         board.CurrentBox(state.gameState.currentCol, state.gameState.currentRow);
     }
 }
@@ -101,7 +100,5 @@ function handleboxClick(row: number, col: number) {
     if (state.gameState.isGameOver || row !== state.gameState.currentRow) return;
     
     state.gameState.currentCol = col;
-    
-    // ✅ Atualiza cursor após click
     board.CurrentBox(state.gameState.currentCol, state.gameState.currentRow);
 }
