@@ -1,104 +1,110 @@
-import './style.css';
-import { state, initializeState, saveState } from './gameState';
+// src/main.ts
+
+// --- IMPORTS ---
+import './components/style.css';
+import { 
+    initializeState, 
+    getState, 
+    updateCurrentGuess, 
+    moveCursorLeft, 
+    moveCursorRight,
+    setCursorPosition
+} from './game/gameState';
+import { initializeBoard } from './components/board';
+import { createKeyboard, updateKeyboardAppearance } from './components/keyboard';
+import { submitGuess, type SubmitResult } from './game/game';
+import { showMessage } from './components/toast';
 import { LETTERS } from './types';
-import * as board from './board';
-import { submitGuess, restoreBoard } from './game';
-import { createKeyboard } from './keyboard';
 
+// --- INICIALIZAÇÃO DA APLICAÇÃO ---
 initializeState();
-
-board.createBoard(handleboxClick);
+initializeBoard(handleboxClick);
 createKeyboard(handleKeyPress);
+updateKeyboardAppearance();
 
-restoreBoard();
 
-
-if (!state.gameState.isGameOver) {
-    board.CurrentBox(state.gameState.currentCol, state.gameState.currentRow);
-}
+// --- LISTENER GLOBAL DE INPUT ---
 document.addEventListener("keydown", handleKeyPress);
 
 
+// --- ESTRATÉGIAS DE INPUT ---
+// Estas funções definem o que fazer para cada tipo de ação.
 function enterStrategy(): void {
-    submitGuess();
+    const result: SubmitResult = submitGuess();
 
-}
-
-function backspaceStrategy(): void {
-    const linhasElement = document.querySelector(`.row-${state.gameState.currentRow}`)!;
-    const caixa = linhasElement.children[state.gameState.currentCol] as HTMLElement;
-    
-    if (state.gameState.currentCol > 0 && caixa.textContent == "") {
-        state.gameState.currentCol--;
-        board.updateBox("", state.gameState.currentRow, state.gameState.currentCol);
-    } else if (state.gameState.currentCol >= 0 && caixa.textContent !== "") {
-        board.updateBox("", state.gameState.currentRow, state.gameState.currentCol);
-    }
-
-}
-
-function arrowLeftStrategy(): void {
-    if (state.gameState.currentCol > 0) {
-        state.gameState.currentCol--;
-    }
-
-}
-
-function arrowRightStrategy(): void {
-    if (state.gameState.currentCol < LETTERS - 1) {
-        state.gameState.currentCol++;
-    }
-
-}
-
-function letterStrategy(key: string): void {
-    if (state.gameState.currentCol < LETTERS) {
-        board.updateBox(key, state.gameState.currentRow, state.gameState.currentCol);
-        if (state.gameState.currentCol < LETTERS - 1) {
-            state.gameState.currentCol++;
-        }
-    }
-}
-
-// Dicionário de estratégias
-const keyStrategies: Record<string, () => void> = {
-    "enter": enterStrategy,
-    "backspace": backspaceStrategy,
-    "arrowleft": arrowLeftStrategy,
-    "arrowright": arrowRightStrategy
-};
-
-// Função para verificar se é uma letra válida
-function isValidLetter(key: string): boolean {
-    return /^[a-z]$/.test(key);
-}
-
-function handleKeyPress(event: KeyboardEvent) {
-    if (state.gameState.isGameOver) return;
-    
-    const key = event.key.toLowerCase();
-    
-    // Executa estratégia específica se existir no dicionário
-    if (keyStrategies[key]) {
-        keyStrategies[key]();
-    }
-    // Executa estratégia de letra se for uma letra válida
-    else if (isValidLetter(key)) {
-        letterStrategy(key);
-    }
-    // Se nenhuma estratégia foi executada, retorna sem atualizar cursor
-    else {
+    if (!result.success) {
+        showMessage(result.message!, 'error');
         return;
     }
     
-    if (!state.gameState.isGameOver) {
-        board.CurrentBox(state.gameState.currentCol, state.gameState.currentRow);
+    updateKeyboardAppearance();
+
+    if (result.message) {
+        const messageType = result.message.includes("Parabéns") ? 'success' : 'error';
+        showMessage(result.message, messageType, 4000);
+    }
+}
+
+function backspaceStrategy(): void {
+    const currentState = getState();
+    let currentGuess = currentState.guesses[currentState.currentRow] || '';
+    const pos = currentState.currentCol;
+    if (pos < currentGuess.length) {
+        const newGuess = currentGuess.slice(0, pos) + currentGuess.slice(pos + 1);
+        updateCurrentGuess(newGuess);
+      
+    } else { 
+       
+        const newGuess = currentGuess.slice(0, pos - 1);
+        updateCurrentGuess(newGuess);
+        moveCursorLeft();
+    }
+}
+
+function letterStrategy(key: string): void {
+    const currentState = getState();
+    let currentGuess = currentState.guesses[currentState.currentRow] || '';
+    
+    if (currentGuess.length < LETTERS) {
+        const pos = currentState.currentCol;
+        const newGuess = currentGuess.slice(0, pos) + key.toUpperCase() + currentGuess.slice(pos);
+        updateCurrentGuess(newGuess);
+        moveCursorRight();
+    }
+}
+
+// --- O 'RECORD' DE ESTRATÉGIAS ---
+// Mapeia a string da tecla para a função a ser executada.
+// Note que para as setas, apontamos diretamente para as funções importadas do gameState.
+const keyStrategies: Record<string, () => void> = {
+    "enter": enterStrategy,
+    "backspace": backspaceStrategy,
+    "arrowleft": moveCursorLeft,
+    "arrowright": moveCursorRight,
+};
+
+// --- CONTROLE DE INPUT ---
+// A nova handleKeyPress, muito mais limpa.
+function handleKeyPress(event: KeyboardEvent) {
+    if (getState().isGameOver) return;
+    
+    const key = event.key.toLowerCase();
+    
+    // 1. Tenta encontrar e executar uma estratégia no Record
+    const strategy = keyStrategies[key];
+    if (strategy) {
+        strategy();
+        return; // Ação encontrada e executada, fim da função.
+    }
+    
+    // 2. Se não encontrou, verifica se é uma letra
+    if (/^[a-z]$/.test(key)) {
+        letterStrategy(key);
     }
 }
 
 function handleboxClick(row: number, col: number) {
-    if (state.gameState.isGameOver || row !== state.gameState.currentRow) return;
+    if (getState().isGameOver || row !== getState().currentRow) return;
     
-    state.gameState.currentCol = col;
-    board.CurrentBox(state.gameState.currentCol, state.gameState.currentRow);
+    setCursorPosition(col);
 }

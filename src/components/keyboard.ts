@@ -1,8 +1,15 @@
+// src/components/keyboard.ts
 
+// --- IMPORTS ---
+// Importa as ferramentas de que precisa: o estado, a lógica de cálculo e a palavra certa.
+import { getState } from "../game/gameState";
+import { calculateAllKeyStatuses } from "../game/game";
+import { palavraCerta } from "../game/words";
 
 const tecladoContainer = document.getElementById("keyboard")!;
 
-// Define o layout das teclas em linhas
+// --- CRIAÇÃO INICIAL DO DOM ---
+// Esta função não muda. Sua responsabilidade é apenas criar os botões e os listeners.
 const layoutTeclado = [
     ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
     ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l' ,'backspace'],
@@ -10,7 +17,6 @@ const layoutTeclado = [
 ];
 
 export function createKeyboard(handleKeyPress: (event: KeyboardEvent) => void) {
-    // Itera sobre o layout para criar as teclas
     layoutTeclado.forEach(linha => {
         const linhaDiv = document.createElement("div");
         linhaDiv.className = "keyboard-row";
@@ -18,12 +24,9 @@ export function createKeyboard(handleKeyPress: (event: KeyboardEvent) => void) {
         linha.forEach(key => {
             const teclaButton = document.createElement("button");
             teclaButton.className = "keyboard-key";
-
-            // Define o texto e o data-key
             teclaButton.textContent = key.toUpperCase();
             teclaButton.dataset.key = key;
 
-            // Estiliza teclas especiais
             if (key === 'enter' || key === 'backspace') {
                 teclaButton.classList.add('keyboard-key-large');
                 if (key === 'backspace') {
@@ -37,35 +40,44 @@ export function createKeyboard(handleKeyPress: (event: KeyboardEvent) => void) {
         tecladoContainer.appendChild(linhaDiv);
     });
 
-    // Adiciona o event listener
     tecladoContainer.addEventListener('click', (event) => {
         const target = event.target as HTMLElement;
-        if (!target.classList.contains('keyboard-key')) {
-            return;
-        }
+        if (!target.classList.contains('keyboard-key')) return;
 
         const key = target.dataset.key;
         if (key) {
-            const virtualKeyboard = ({ key: key } as KeyboardEvent);
-            handleKeyPress(virtualKeyboard);
+            handleKeyPress({ key: key } as KeyboardEvent);
         }
     });
 }
-    export function updateKeyStatus(key: string, status: 'correct' | 'present' | 'absent') {
+
+
+// --- LÓGICA DE ATUALIZAÇÃO DA UI ---
+
+// 1. A "Operária": Sabe apenas como pintar UMA tecla. Perfeito.
+export function updateKeyStatus(key: string, status: 'correct' | 'present' | 'absent') {
     const keyElement = tecladoContainer.querySelector(`[data-key="${key.toLowerCase()}"]`) as HTMLElement;
     if (!keyElement) return;
 
-    // Prioridade de status: não rebaixa uma tecla que já está correta.
     if (keyElement.classList.contains('correct')) return;
-    
-    // Não rebaixa uma tecla presente para ausente.
     if (keyElement.classList.contains('present') && status === 'absent') return;
 
-    // Remove status de cor antigos para aplicar o novo.
     keyElement.classList.remove('present', 'absent');
-
-    // Adiciona a classe de status correspondente ('correct', 'present', ou 'absent').
-    // O seu style.css cuidará da cor com base nessas classes.
     keyElement.classList.add(status);
+}
 
+
+// 2. A "Maestro": Orquestra a atualização completa do teclado.
+// Esta é a única função que precisa ser chamada de fora para atualizar tudo.
+export function updateKeyboardAppearance() {
+    // a. Pega os dados do estado do jogo
+    const guesses = getState().guesses;
+
+    // b. Pede ajuda ao módulo de lógica para calcular os status
+    const allStatuses = calculateAllKeyStatuses(guesses, palavraCerta);
+
+    // c. Manda a "operária" (updateKeyStatus) pintar cada tecla com base nos resultados
+    for (const letter in allStatuses) {
+        updateKeyStatus(letter, allStatuses[letter]);
+    }
 }

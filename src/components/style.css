@@ -74,3 +74,15 @@
 .toast-container.error {
   @apply bg-red-500;
 }
+
+.box.correct {
+  @apply bg-green-500 text-white border-none;
+}
+
+.box.present {
+  @apply bg-yellow-500 text-white border-none;
+}
+
+.box.absent {
+  @apply bg-gray-700 text-white border-none;
+}
