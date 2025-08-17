@@ -1,7 +1,7 @@
 export const respostas: string[] = [
 'deste', 'pajem', 'digno', 'macho', 'epico', 'grito', 'lorde', 'afeto', 'obter', 'duque', 'atomo','briga', 'brisa', 'total', 'vazar', 'largo', 'forma', 'texto', 'honra', 'gesto', 'nuvem', 'jovem', 'sentir', 'sinal', 'sexta', 'corpo', 'crime', 'droga', 'gerar', 'unico', 'canto', 'pedir', 'drama', 'saber', 'viver', 'ponto', 'festa', 'jogar', 'pedra', 'levar', 'venda', 'poder', 'correr', 'cheio', 'feliz', 'tenis', 'seita', 'falar', 'olhar', 'pegar', 'letra', 'pente', 'termo', 'chuva', 'calma', 'chefe', 'andar', 'campo', 'lugar', 'parar', 'virar', 'olhos', 'mexer', 'perto', 'carro', 'amigo', 'uniao', 'museu', 'vazio', 'aceno', 'traco', 'sutil', 'livro', 'ideia', 'sonho', 'ditar', 'pleno', 'nascer', 'ordem', 'peixe', 'porta', 'furia', 'ciclo', 'folha', 'tropa', 'sirio', 'video', 'gosto', 'outro', 'morte', 'amplo', 'passo', 'noite', 'gerir', 'justa', 'danca', 'ouvir', 'venda', 'pobre', 'moral', 'trono', 'sitio', 'ritmo', 'signo', 'antes', 'prole', 'setor', 'papel', 'causa', 'lento', 'velho', 'fonte', 'motor', 'ajuda', 'carne', 'prazo', 'preco', 'pular', 'mundo', 'etnia', 'verme', 'fraco', 'civis', 'praia', 'magia', 'braco', 'senso', 'prova', 'verso', 'bicho', 'asilo', 'credo', 'dever', 'turma', 'visar', 'santo', 'roupa', 'lorde', 'marco', 'certo', 'praca', 'sabor', 'somar', 'senao', 'dizer', 'louco', 'forte', 'limpo', 'fosso', 'calor', 'rezar', 'tarde', 'medir', 'epico', 'vulto', 'remar', 'frase', 'fator', 'serio', 'cisne', 'tacha', 'pajem', 'valor', 'relog', 'temer', 'dogma', 'macho', 'terno', 'obter', 'graca', 'afeto', 'vento', 'verbo', 'sanar', 'sonso', 'garra', 'astro', 'audaz', 'atomo', 'calar', 'livre', 'lider', 'lavar', 'julgar', 'filme', 'fuzil', 'fluir', 'fluxo', 'vasto', 'gueto', 'genro', 'globo', 'finda', 'fruto', 'trato', 'zelar', 'zelo', 'negro', 'nicho', 'manga', 'lindo', 'mexer', 'nasci', 'nojo', 'labor', 'furor', 'longo', 'leigo', 'lesse', 'falir', 'justo', 'farol', 'filho', 'focar', 'fauna', 'feixe', 'fatal', 'grato', 'jejum', 'junto', 'haver', 'heroi', 'humor', 'havia', 'cacho', 'homem', 'hotel', 'idoso', 'igual', 'impar', 'itens', 'icone', 'chato', 'chorar', 'casar', 'coroa', 'casto', 'caixa', 'calmo', 'cheia', 'ceita', 'cesta', 'burro', 'bruto', 'busca', 'breve', 'bravo', 'briga', 'bater', 'beijo', 'beber', 'bando', 'banho', 'banca', 'bambu', 'calca', 'achar', 'abrir', 'acima', 'agudo', 'ainda', 'ajude', 'advir', 'agape', 'aereo', 'afago', 'adeus', 'afins', 'agora', 'album', 'abril', 'alado', 'aliar', 'alcar', 'alma', 'aluno', 'amado', 'amiga', 'amigo', 'amplo', 'andar', 'antes', 'anual', 'apoio', 'apelo', 'arido', 'arcar', 'ardor', 'ardil', 'arco', 'arena', 'arroz', 'assaz', 'asilo', 'astro', 'atimo', 'atriz', 'ateu', 'autor', 'ativo', 'atras', 'atrio', 'atuar', 'atual', 'avaro', 'aviao', 'avido', 'avisar', 'axial', 'axila', 'azedo', 'babar', 'babar', 'babao', 'babel', 'bacia', 'bacon', 'bafar', 'bagos', 'baile', 'baita', 'baixa', 'baixo', 'balao', 'balde', 'balir', 'balsa', 'bamba', 'banal', 'banda' , 'macio', 'terno', 'garra', 'rezar', 'dizer', 'atriz', 'tarde', 'futil', 'prosa', 'etnia', 'sonho', 'justo', 'traco', 'letra', 'tacha', 'prole', 'genro', 'fuzil', 'aspas', 'justa', 'civis', 'gueto', 'porem', 'sanar', 'ideia', 'ceder', 'cisne', 'pauta', 'turma', 'credo', 'culto', 'danca', 'visar', 'moral', 'gleba', 'fraco', 'causa', 'dogma', 'graca', 'anexo', 'expor', 'nobre', 'exame', 'audaz', 'termo', 'haver', 'fazer', 'deixa', 'sutil', 'coser', 'exito', 'valia'];
 
-export let respostasFiltradas  = respostas.filter(palavra => palavra.length === 5).map(palavra => palavra.toUpperCase());
+
 
 
 export const tentativasValidas: string[] = ['Aarao',
@@ -6030,14 +6030,50 @@ export const tentativasValidas: string[] = ['Aarao',
 'zurro'];
 export const tentativasValidasFiltradas = tentativasValidas.filter(palavra => palavra.length === 5).map(palavra => palavra.toUpperCase());;
 
-export const dataFixa = new Date('2025-07-18T00:00:00')
-export const hoje = new Date();
+export const respostasFiltradas = respostas
+    .filter(palavra => palavra.length === 5)
+    .map(palavra => palavra.toUpperCase());
 
-function indexPalavra(dataFixa: Date, hoje : Date): number {
-  
-  return Math.floor((hoje.getTime() % dataFixa.getTime()) / (1000 * 60 * 60 * 24));
+// 2. O dicionário único e otimizado para todas as tentativas válidas.
+const todasAsTentativas = [...respostas, ...tentativasValidas]
+    .filter(palavra => palavra.length === 5)
+    .map(palavra => palavra.toUpperCase());
 
+export const dicionarioValido = new Set(todasAsTentativas);
+
+// --- LÓGICA DA PALAVRA DO JOGO ---
+
+export let palavraCerta: string;
+
+/**
+ * Define qual é a palavra da partida atual.
+ */
+export function setPalavraCerta(palavra: string) {
+    palavraCerta = palavra;
 }
-const index = indexPalavra(dataFixa, hoje);
-export const palavraCerta = respostasFiltradas[index];
 
+/**
+ * Calcula e retorna a palavra do dia com base na data atual.
+ */
+export function getDailyWord(): string {
+    const dataInicio = new Date('2025-07-18T00:00:00');
+    const hoje = new Date();
+
+    dataInicio.setHours(0, 0, 0, 0);
+    hoje.setHours(0, 0, 0, 0);
+
+    const diffTempo = hoje.getTime() - dataInicio.getTime();
+    const diffDias = Math.floor(diffTempo / (1000 * 60 * 60 * 24));
+    
+    const index = diffDias % respostasFiltradas.length;
+    return respostasFiltradas[index];
+}
+
+/**
+ * NOVO: Seleciona uma palavra aleatória da lista de respostas.
+ * Essencial para os modos de jogo 'random' e 'timed'.
+ */
+export function selectRandomWord(): string {
+    const randomIndex = Math.floor(Math.random() * respostasFiltradas.length);
+    return respostasFiltradas[randomIndex];
+}

@@ -5,19 +5,26 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="public/az.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LetrAZ</title>
+ <title>LetrAZ - Jogo de Adivinhar Palavras em Português</title>
+ <meta name="description" content="Teste seu vocabulário com o LetrAZ! Um divertido jogo de adivinhar a palavra de 5 letras em português. Jogue o desafio do dia ou pratique no modo infinito.">
 </head>
 
 <body id="app" class="flex flex-col h-screen bg-sky-50">
 
-  <header class="text-center p-8 bg-sky-600  opacity-90 shadow-md mb-4 " >
-    <h1 class="text-3xl text-white font-bold">LetrAZ</h1>
+  <header class="text-center p-4 bg-sky-600  opacity-90 shadow-md  " >
+    <h1 class="text-3xl text-white font-bold"> <a href="#">LetrAZ</a></h1>
 
   </header>
+  <div  class="text-center flex  p-1 bg-sky-200  shadow-md mb-4 ">
+    
+      <button id="practice-mode-btn" class="px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700 focus:outline-none">
+       Modo Infinito
+      </button>
+  </div>
 
- <div id="toast" class="toast-container">
-  <span id="toast-message"></span>
-</div>
+  <div id="toast" class="toast-container">
+    <span id="toast-message"></span>
+  </div>
 
   <div id="container-tabuleiro" class="flex-grow flex flex-col justify-center items-center w-full">
     <div id="tabuleiro" class="grid grid-rows-5 gap-2">
@@ -30,7 +37,6 @@
   </div>
 
   <footer class="text-center mt-3  p-8 bg-sky-200 shadow-2xl text-gray-700">
-
     <p>Desenvolvido por João Gabriel<a href="https://github.com/gabriel-barboza" class=" text-blue-800 " target="_blank">  GITHUB </a>|| <a href="https://www.linkedin.com/in/joão-gabriel-barboza"  class="text-blue-800" target="_blank"> LINKEDIN </a>  </p>
     <P>Baseado nos jogos <a href="https://term.ooo" class=" text-blue-800 " target="_blank"> Termo</a> e <a href="https://www.powerlanguage.co.uk/wordle/"  class=" text-blue-800 "> Wordle </a></P>
   </footer>

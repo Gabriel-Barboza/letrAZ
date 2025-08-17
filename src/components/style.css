@@ -7,6 +7,9 @@
 .box {
     @apply w-16 h-16 md:w-15 md:h-18 md:w-18 rounded-lg flex items-center justify-center md:text-2xl font-bold ;
 }
+.board-row {
+    @apply flex justify-center gap-1 mb-1;
+}
 
 .box-active {
     @apply border-2 border-gray-800 bg-white text-gray-800 shadow-2xl cursor-pointer;

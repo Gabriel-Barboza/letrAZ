@@ -8,7 +8,23 @@ export interface GameStats {
     currentStreak: number;
     maxStreak: number;
     winDistribution: { [key: number]: number };
+    
+
 }
+
+export interface GameMode{
+    gameType: 'daily' | 'timed' | 'random';
+}
+
+export interface timedModeStats extends GameStats {
+    score: number;
+    timeTaken: number;
+    hintsUsed: number;
+    maxScore: number;
+
+}
+export interface RandomModeStats extends GameStats {}
+
 
 // O estado da partida atual
 export interface CurrentGameState {
@@ -24,4 +40,7 @@ export interface CurrentGameState {
 export interface SaveData {
     stats: GameStats;
     gameState: CurrentGameState;
+    gameMode: GameMode;
+    timedModeStats: timedModeStats;
+    randomModeStats: RandomModeStats;
 }
