@@ -33,43 +33,42 @@
 
 
 .keyboard-key.correct {
-  background-color: #6aaa64; /* Verde */
+  background-color: #6aaa64; 
   color: white;
 }
 
 .keyboard-key.present {
-  background-color: #c9b458; /* Amarelo */
+  background-color: #c9b458; 
   color: white;
 }
 
 .keyboard-key.absent {
-  background-color: #787c7e; /* Cinza escuro */
+  background-color: #787c7e; 
   color: white;
 }
 
 .toast-container {
-  /* Posicionamento */
+
   @apply fixed top-5 left-1/2 -translate-x-1/2;
   
-  /* Estilo */
+
   @apply px-6 py-3 rounded-lg shadow-lg text-white font-semibold;
 
-  /* Estado Inicial (Invisível) */
+ 
   @apply opacity-0 -translate-y-10;
 
-  /* Animação */
+
   @apply transition-all duration-500 ease-in-out;
   
-  /* Garante que fique sobre outros elementos */
+
   z-index: 50;
 }
 
-/* Classe que o JavaScript vai adicionar para TORNAR VISÍVEL */
 .toast-container.visible {
   @apply opacity-100 translate-y-0;
 }
 
-/* Estilos para diferentes tipos de mensagem */
+
 .toast-container.success {
   @apply bg-green-500;
 }

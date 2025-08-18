@@ -6034,27 +6034,23 @@ export const respostasFiltradas = respostas
     .filter(palavra => palavra.length === 5)
     .map(palavra => palavra.toUpperCase());
 
-// 2. O dicionário único e otimizado para todas as tentativas válidas.
+
 const todasAsTentativas = [...respostas, ...tentativasValidas]
     .filter(palavra => palavra.length === 5)
     .map(palavra => palavra.toUpperCase());
 
 export const dicionarioValido = new Set(todasAsTentativas);
 
-// --- LÓGICA DA PALAVRA DO JOGO ---
+
 
 export let palavraCerta: string;
 
-/**
- * Define qual é a palavra da partida atual.
- */
+
 export function setPalavraCerta(palavra: string) {
     palavraCerta = palavra;
 }
 
-/**
- * Calcula e retorna a palavra do dia com base na data atual.
- */
+
 export function getDailyWord(): string {
     const dataInicio = new Date('2025-07-18T00:00:00');
     const hoje = new Date();
@@ -6069,10 +6065,7 @@ export function getDailyWord(): string {
     return respostasFiltradas[index];
 }
 
-/**
- * NOVO: Seleciona uma palavra aleatória da lista de respostas.
- * Essencial para os modos de jogo 'random' e 'timed'.
- */
+
 export function selectRandomWord(): string {
     const randomIndex = Math.floor(Math.random() * respostasFiltradas.length);
     return respostasFiltradas[randomIndex];

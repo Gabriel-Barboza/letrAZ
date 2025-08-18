@@ -1,9 +1,8 @@
-// src/components/keyboard.ts
 
 import { getState } from '../game/gameState';
 import { palavraCerta } from '../game/words';
 import { calculateAllKeyStatuses } from '../game/game';
-import { EventBus } from '../eventBus'; // Importa o Event Bus
+import { EventBus } from '../eventBus'; 
 
 const tecladoContainer = document.getElementById("keyboard")!;
 
@@ -14,7 +13,7 @@ const layoutTeclado = [
 ];
 
 export function createKeyboard(handleKeyPress: (event: KeyboardEvent) => void) {
-    tecladoContainer.innerHTML = ''; // Limpa antes de criar
+    tecladoContainer.innerHTML = ''; 
     layoutTeclado.forEach(linha => {
         const linhaDiv = document.createElement("div");
         linhaDiv.className = "keyboard-row";
@@ -29,7 +28,7 @@ export function createKeyboard(handleKeyPress: (event: KeyboardEvent) => void) {
         tecladoContainer.appendChild(linhaDiv);
     });
 
-    // MUDANÇA: Ouve os eventos para se atualizar
+
     EventBus.on('guessSubmitted', updateKeyboardAppearance);
     EventBus.on('initialStateLoaded', updateKeyboardAppearance); 
 
@@ -58,9 +57,8 @@ export function updateKeyboardAppearance() {
     });
 
     const fullState = getState();
-    // MUDANÇA: Acessa o estado corretamente
     const allStatuses = calculateAllKeyStatuses(fullState.gameState.guesses, palavraCerta);
-
+    
     for (const letter in allStatuses) {
         updateKeyStatus(letter, allStatuses[letter]);
     }

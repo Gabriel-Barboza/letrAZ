@@ -1,6 +1,4 @@
-// src/game/game.ts
 
-// MUDANÇA: Importa 'dicionarioValido' e a 'palavraCerta'
 import { palavraCerta, dicionarioValido } from "./words";
 import { getState, setGameOver, advanceToNextRow } from "./gameState";
 import { PLAYS, LETTERS } from "../types";
@@ -18,7 +16,7 @@ export function submitGuess(): SubmitResult {
         return { success: false, message: "Digite 5 letras." };
     }
     
-    // MUDANÇA: Validação agora usa o dicionário otimizado
+
     if (!dicionarioValido.has(guess)) {
         return { success: false, message: "Palavra inválida." };
     }
