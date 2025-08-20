@@ -9,7 +9,8 @@ import {
     moveCursorRight,
     setCursorPosition,
     setActiveGameMode,
-    resetGameStateForNewGame
+    resetGameStateForNewGame,
+    modoDeJogo
 } from './game/gameState';
 import { initializeBoard } from './components/board'; 
 import { createKeyboard } from './components/keyboard'; 
@@ -21,14 +22,23 @@ import { EventBus } from './eventBus';
 
 function startGame(mode: GameMode['gameType']) {
     setActiveGameMode(mode);
+    modeModal?.classList.add("hidden");
     const word = (mode === 'daily') ? getDailyWord() : selectRandomWord();
     setPalavraCerta(word);
     resetGameStateForNewGame();
     console.log(`Novo jogo iniciado no modo '${mode}'. Palavra: ${palavraCerta}`);
+
 }
 
 initializeState();
+
+const headerLink = document.getElementById("headerLink");
+
+
+
+
 const initialData = getState();
+
 const initialWord = (initialData.gameMode.gameType === 'daily') ? getDailyWord() : selectRandomWord();
 setPalavraCerta(initialWord);
 
@@ -37,11 +47,32 @@ createKeyboard(handleKeyPress);
 EventBus.emit('initialStateLoaded'); 
 EventBus.emit('stateChanged');
 
+const modeModal = document.getElementById("modeModal");
+
+    modeModal?.classList.remove("hidden");
+
+const modeModalButton = document.getElementById("modeModalButton");
+
+
+document.addEventListener('click', (event) => {
+    event.stopPropagation();
+    modeModal?.classList.add("hidden");
+});
+
+modeModalButton?.addEventListener('click', (event) => {
+    event.stopPropagation();
+    modeModal?.classList.remove("hidden");
+});
+
+
 document.addEventListener("keydown", handleKeyPress);
 
 document.getElementById('daily-mode-btn')?.addEventListener('click', () => startGame('daily'));
 document.getElementById('timed-mode-btn')?.addEventListener('click', () => startGame('timed'));
 document.getElementById('random-mode-btn')?.addEventListener('click', () => startGame('random'));
+if (headerLink) {
+    headerLink.textContent = `LetrAZ ${modoDeJogo}`;
+}
 
 function enterStrategy(): void {
     const result = submitGuess();

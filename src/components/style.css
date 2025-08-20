@@ -5,7 +5,10 @@
 }
 
 .box {
-    @apply w-16 h-16 md:w-15 md:h-18 md:w-18 rounded-lg flex items-center justify-center md:text-2xl font-bold ;
+    @apply w-16 h-16 md:h-18 rounded-lg flex items-center justify-center md:text-2xl font-bold ;
+}
+.boxPopUp{
+  @apply w-16 h-16 md:h-18 md:w-18 rounded-lg md:text-2xl font-bold ;
 }
 .board-row {
     @apply flex justify-center gap-1 mb-1;
@@ -32,21 +35,32 @@
 }
 
 
+.modal {
+  @apply fixed inset-0 flex justify-center items-center z-[1000];
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  @apply bg-sky-200 p-8 rounded text-center;
+}
+
+/* Classe para esconder o modal */
+.hidden {
+  @apply hidden;
+}
+
 .keyboard-key.correct {
-  background-color: #6aaa64; 
-  color: white;
+  @apply  bg-green-500  opacity-80 text-white;
 }
 
 .keyboard-key.present {
-  background-color: #c9b458; 
-  color: white;
+  @apply  bg-yellow-500  opacity-80 text-white;
 }
 
 .keyboard-key.absent {
-  background-color: #787c7e; 
-  color: white;
+  @apply bg-gray-700 opacity-80 text-white;
 }
-
 .toast-container {
 
   @apply fixed top-5 left-1/2 -translate-x-1/2;
@@ -77,7 +91,7 @@
   @apply bg-red-500;
 }
 
-.box.correct {
+.correct {
   @apply bg-green-500 text-white border-none;
 }
 
@@ -87,4 +101,8 @@
 
 .box.absent {
   @apply bg-gray-700 text-white border-none;
+}
+
+button {
+  @apply cursor-pointer;
 }

@@ -39,7 +39,7 @@ function createInitialState(): SaveData {
         },
     };
 }
-
+export let modoDeJogo = ""
 export function getState(): SaveData {
     return state;
 }
@@ -69,13 +69,16 @@ export function setGameOver(didWin: boolean) {
     switch (state.gameMode.gameType) {
         case "timed":
             activeStats = state.timedModeStats;
+            modoDeJogo = "Rush";
             break;
         case "random":
             activeStats = state.randomModeStats;
+            modoDeJogo = "Aleatório";
             break;
         case "daily":
         default:
             activeStats = state.stats;
+            modoDeJogo = "Diário";
             break;
     }
 
