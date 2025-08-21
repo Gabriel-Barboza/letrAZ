@@ -1,10 +1,11 @@
+// src/components/keyboard.ts
 
-import { getState } from '../game/gameState';
+import { getActiveGameState } from '../game/gameState';
 import { palavraCerta } from '../game/words';
 import { calculateAllKeyStatuses } from '../game/game';
 import { EventBus } from '../eventBus'; 
 
-const tecladoContainer = document.getElementById("keyboard")!;
+let tecladoContainer: HTMLElement;
 
 const layoutTeclado = [
     ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
@@ -13,6 +14,13 @@ const layoutTeclado = [
 ];
 
 export function createKeyboard(handleKeyPress: (event: KeyboardEvent) => void) {
+    const container = document.getElementById("keyboard");
+    if (!container) {
+        console.error("Erro crítico: O contêiner do teclado com id='keyboard' não foi encontrado no HTML.");
+        return;
+    }
+    tecladoContainer = container;
+
     tecladoContainer.innerHTML = ''; 
     layoutTeclado.forEach(linha => {
         const linhaDiv = document.createElement("div");
@@ -28,9 +36,9 @@ export function createKeyboard(handleKeyPress: (event: KeyboardEvent) => void) {
         tecladoContainer.appendChild(linhaDiv);
     });
 
-
     EventBus.on('guessSubmitted', updateKeyboardAppearance);
-    EventBus.on('initialStateLoaded', updateKeyboardAppearance); 
+    EventBus.on('initialStateLoaded', updateKeyboardAppearance);
+
 
     tecladoContainer.addEventListener('click', (event) => {
         const target = event.target as HTMLElement;
@@ -40,6 +48,7 @@ export function createKeyboard(handleKeyPress: (event: KeyboardEvent) => void) {
 }
 
 export function updateKeyStatus(key: string, status: 'correct' | 'present' | 'absent') {
+    if (!tecladoContainer) return;
     const keyElement = tecladoContainer.querySelector(`[data-key="${key.toLowerCase()}"]`) as HTMLElement;
     if (!keyElement) return;
 
@@ -51,13 +60,14 @@ export function updateKeyStatus(key: string, status: 'correct' | 'present' | 'ab
 }
 
 export function updateKeyboardAppearance() {
+    if (!tecladoContainer) return;
     const allKeys = tecladoContainer.querySelectorAll('.keyboard-key');
     allKeys.forEach(key => {
         key.classList.remove('correct', 'present', 'absent');
     });
 
-    const fullState = getState();
-    const allStatuses = calculateAllKeyStatuses(fullState.gameState.guesses, palavraCerta);
+    const activeGameState = getActiveGameState();
+    const allStatuses = calculateAllKeyStatuses(activeGameState.guesses, palavraCerta);
     
     for (const letter in allStatuses) {
         updateKeyStatus(letter, allStatuses[letter]);

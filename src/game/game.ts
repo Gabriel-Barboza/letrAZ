@@ -1,6 +1,8 @@
+// src/game/game.ts
 
 import { palavraCerta, dicionarioValido } from "./words";
-import { getState, setGameOver, advanceToNextRow } from "./gameState";
+// 1. ATUALIZADO: Importamos o novo "helper" e removemos o antigo "getState".
+import { getActiveGameState, setGameOver, advanceToNextRow } from "./gameState";
 import { PLAYS, LETTERS } from "../types";
 
 export interface SubmitResult {
@@ -8,15 +10,15 @@ export interface SubmitResult {
     message?: string;
 }
 
+// 2. ATUALIZADO: Esta função agora usa getActiveGameState() para obter os dados corretos.
 export function submitGuess(): SubmitResult {
-    const currentState = getState();
-    const guess = currentState.gameState.guesses[currentState.gameState.currentRow] || '';
+    const activeGameState = getActiveGameState(); // Usa o helper para pegar o estado do modo ativo.
+    const guess = activeGameState.guesses[activeGameState.currentRow] || '';
 
     if (guess.length < LETTERS) {
         return { success: false, message: "Digite 5 letras." };
     }
     
-
     if (!dicionarioValido.has(guess)) {
         return { success: false, message: "Palavra inválida." };
     }
@@ -28,7 +30,7 @@ export function submitGuess(): SubmitResult {
         return { success: true, message: "Parabéns, você acertou!" };
     }
 
-    if (currentState.gameState.currentRow + 1 >= PLAYS) {
+    if (activeGameState.currentRow + 1 >= PLAYS) {
         setGameOver(false);
         return { success: true, message: `Fim de jogo! A palavra era: ${palavraCerta}` };
     }
@@ -37,6 +39,7 @@ export function submitGuess(): SubmitResult {
     return { success: true };
 }
 
+// Nenhuma mudança necessária aqui. Esta função não depende do estado do jogo.
 export function evaluateGuess(guess: string, answer: string): ("correct" | "present" | "absent")[] {
     const result: ("correct" | "present" | "absent")[] = Array(LETTERS).fill("absent");
     const answerLetters = answer.split('');
@@ -60,6 +63,7 @@ export function evaluateGuess(guess: string, answer: string): ("correct" | "pres
     return result;
 }
 
+// Nenhuma mudança necessária aqui. Os "guesses" são passados como parâmetro.
 export function calculateAllKeyStatuses(guesses: string[], answer: string): Record<string, "correct" | "present" | "absent"> {
     const keyStatus: Record<string, "correct" | "present" | "absent"> = {};
     const relevantGuesses = guesses.filter(g => g);

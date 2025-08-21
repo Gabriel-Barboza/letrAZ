@@ -5,7 +5,7 @@
 }
 
 .box {
-    @apply w-16 h-16 md:h-18 rounded-lg flex items-center justify-center md:text-2xl font-bold ;
+    @apply w-16 h-16 md:h-18 md:w-18 rounded-lg flex items-center justify-center md:text-2xl font-bold ;
 }
 .boxPopUp{
   @apply w-16 h-16 md:h-18 md:w-18 rounded-lg md:text-2xl font-bold ;

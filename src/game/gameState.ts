@@ -1,7 +1,7 @@
 // src/game/gameState.ts
 
 import { LETTERS, PLAYS } from "../types";
-import type { SaveData, CurrentGameState, GameMode } from "../types";
+import type { SaveData, CurrentGameState, GameModeType, GameStats, RandomModeStats, timedModeStats } from "../types";
 import { EventBus } from "../eventBus";
 
 let state: SaveData;
@@ -11,76 +11,89 @@ function getTodayDateString(): string {
 }
 
 function createInitialState(): SaveData {
-    const statsPadrao = {
+    const createCleanGameState = (date?: string): CurrentGameState => ({
+        guesses: Array(PLAYS).fill(""),
+        currentRow: 0,
+        currentCol: 0,
+        isGameOver: false,
+        isComplete: false,
+        date: date || getTodayDateString(),
+    });
+
+    const createCleanStats = (): GameStats => ({
         gamesPlayed: 0,
         wins: 0,
         currentStreak: 0,
         maxStreak: 0,
         winDistribution: {},
-    };
+    });
+
     return {
-        stats: { ...statsPadrao },
-        timedModeStats: {
-            ...statsPadrao,
-            score: 0,
-            timeTaken: 0,
-            hintsUsed: 0,
-            maxScore: 0,
-        },
-        randomModeStats: { ...statsPadrao },
-        gameMode: { gameType: "daily" },
-        gameState: {
-            guesses: Array(PLAYS).fill(""),
-            currentRow: 0,
-            currentCol: 0,
-            isGameOver: false,
-            isComplete: false,
-            date: getTodayDateString(),
-        },
+        activeMode: 'daily',
+        modes: {
+            daily: {
+                stats: createCleanStats(),
+                gameState: createCleanGameState(getTodayDateString()),
+            },
+            random: {
+                stats: createCleanStats() as RandomModeStats,
+                gameState: createCleanGameState(),
+            },
+            timed: {
+                stats: {
+                    ...createCleanStats(),
+                    score: 0,
+                    timeTaken: 0,
+                    hintsUsed: 0,
+                    maxScore: 0,
+                } as timedModeStats,
+                gameState: createCleanGameState(),
+            },
+        }
     };
 }
-export let modoDeJogo = ""
+
+function saveState() {
+    const stateToSave = JSON.parse(JSON.stringify(state));
+    const cleanGameState = createInitialState().modes.random.gameState;
+
+    stateToSave.modes.random.gameState = cleanGameState;
+    stateToSave.modes.timed.gameState = cleanGameState;
+    
+    localStorage.setItem("gameData", JSON.stringify(stateToSave));
+}
+
 export function getState(): SaveData {
     return state;
 }
 
-function saveState() {
-    localStorage.setItem("gameData", JSON.stringify(state));
+export function getActiveGameState(): CurrentGameState {
+    return state.modes[state.activeMode].gameState;
 }
 
-export function setActiveGameMode(mode: GameMode["gameType"]) {
-    state.gameMode.gameType = mode;
+export function getActiveStats() {
+    return state.modes[state.activeMode].stats;
+}
+
+export function setActiveGameMode(mode: GameModeType) {
+    state.activeMode = mode;
+    saveState();
 }
 
 export function resetGameStateForNewGame() {
     const initialState = createInitialState();
-    state.gameState = initialState.gameState;
-
+    state.modes[state.activeMode].gameState = initialState.modes[state.activeMode].gameState;
+    
     EventBus.emit("stateChanged");
-
     EventBus.emit("guessSubmitted");
 }
 
 export function setGameOver(didWin: boolean) {
-    state.gameState.isGameOver = true;
-    state.gameState.isComplete = true;
+    const activeGameState = getActiveGameState();
+    const activeStats = getActiveStats();
 
-    let activeStats;
-    switch (state.gameMode.gameType) {
-        case "timed":
-            activeStats = state.timedModeStats;
-            modoDeJogo = "Rush";
-            break;
-        case "random":
-            activeStats = state.randomModeStats;
-            modoDeJogo = "Aleatório";
-            break;
-        case "daily":
-        default:
-            activeStats = state.stats;
-            modoDeJogo = "Diário";
-            break;
-    }
+    activeGameState.isGameOver = true;
+    activeGameState.isComplete = true;
 
     activeStats.gamesPlayed++;
     if (didWin) {
@@ -89,84 +102,87 @@ export function setGameOver(didWin: boolean) {
         if (activeStats.currentStreak > activeStats.maxStreak) {
             activeStats.maxStreak = activeStats.currentStreak;
         }
-        const winRow = state.gameState.currentRow + 1;
-        activeStats.winDistribution[winRow] =
-            (activeStats.winDistribution[winRow] || 0) + 1;
+        const winRow = activeGameState.currentRow + 1;
+        activeStats.winDistribution[winRow] = (activeStats.winDistribution[winRow] || 0) + 1;
     } else {
         activeStats.currentStreak = 0;
     }
 
     saveState();
-
     EventBus.emit("stateChanged");
     EventBus.emit("guessSubmitted");
 }
 
 export function updateCurrentGuess(guess: string) {
-    state.gameState.guesses[state.gameState.currentRow] = guess;
-
+    getActiveGameState().guesses[getActiveGameState().currentRow] = guess;
     EventBus.emit("stateChanged");
 }
 
 export function advanceToNextRow() {
-    state.gameState.currentRow++;
-    state.gameState.currentCol = 0;
+    const activeGameState = getActiveGameState();
+    activeGameState.currentRow++;
+    activeGameState.currentCol = 0;
     saveState();
-
     EventBus.emit("stateChanged");
     EventBus.emit("guessSubmitted");
 }
 
 export function moveCursorLeft() {
-    if (state.gameState.currentCol > 0) {
-        state.gameState.currentCol--;
-
+    const activeGameState = getActiveGameState();
+    if (activeGameState.currentCol > 0) {
+        activeGameState.currentCol--;
         EventBus.emit("stateChanged");
     }
 }
 
 export function moveCursorRight() {
-    if (state.gameState.currentCol < LETTERS) {
-        state.gameState.currentCol++;
-
+    const activeGameState = getActiveGameState();
+    if (activeGameState.currentCol < LETTERS) {
+        activeGameState.currentCol++;
         EventBus.emit("stateChanged");
     }
 }
 
 export function setCursorPosition(col: number) {
+    const activeGameState = getActiveGameState();
     if (col >= 0 && col <= LETTERS) {
-        state.gameState.currentCol = col;
-
+        activeGameState.currentCol = col;
         EventBus.emit("stateChanged");
     }
 }
 
 export function initializeState() {
     const savedDataString = localStorage.getItem("gameData");
+    state = createInitialState();
+
     if (savedDataString) {
-        const savedData: Partial<SaveData> = JSON.parse(savedDataString);
-        const initialState = createInitialState();
-        state = {
-            ...initialState,
-            ...savedData,
-            stats: { ...initialState.stats, ...savedData.stats },
-            timedModeStats: {
-                ...initialState.timedModeStats,
-                ...savedData.timedModeStats,
-            },
-            randomModeStats: {
-                ...initialState.randomModeStats,
-                ...savedData.randomModeStats,
-            },
-        };
-        if (state.gameMode.gameType === "daily") {
-            const today = getTodayDateString();
-            if (state.gameState.date !== today) {
-                state.gameState = initialState.gameState;
+        try {
+            const savedData: Partial<SaveData> = JSON.parse(savedDataString);
+            
+            if (savedData.activeMode) {
+                state.activeMode = savedData.activeMode;
             }
+
+            if (savedData.modes) {
+                if (savedData.modes.daily) {
+                    state.modes.daily = savedData.modes.daily;
+                }
+                if (savedData.modes.random?.stats) {
+                    state.modes.random.stats = savedData.modes.random.stats;
+                }
+                if (savedData.modes.timed?.stats) {
+                    state.modes.timed.stats = savedData.modes.timed.stats;
+                }
+            }
+        } catch (error) {
+            console.error("Erro ao carregar dados salvos. Começando um novo jogo.", error);
+            localStorage.removeItem("gameData");
+            state = createInitialState();
         }
-    } else {
-        state = createInitialState();
     }
-    saveState();
+
+    const today = getTodayDateString();
+    if (state.modes.daily.gameState.date !== today) {
+        state.modes.daily = createInitialState().modes.daily;
+    }
 }

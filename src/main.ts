@@ -3,125 +3,129 @@
 import './components/style.css';
 import { 
     initializeState, 
-    getState, 
+    getActiveGameState,
     updateCurrentGuess, 
     moveCursorLeft, 
     moveCursorRight,
     setCursorPosition,
     setActiveGameMode,
     resetGameStateForNewGame,
-    modoDeJogo
 } from './game/gameState';
 import { initializeBoard } from './components/board'; 
-import { createKeyboard } from './components/keyboard'; 
-import { submitGuess, type SubmitResult } from './game/game';
+import { createKeyboard , updateKeyboardAppearance} from './components/keyboard'; 
+import { submitGuess } from './game/game';
 import { showMessage } from './components/toast';
-import { LETTERS, type GameMode } from './types';
+import { LETTERS, type GameModeType } from './types'; // ATUALIZADO
 import { getDailyWord, selectRandomWord, setPalavraCerta, palavraCerta } from './game/words';
 import { EventBus } from './eventBus';
 
-function startGame(mode: GameMode['gameType']) {
+function startGame(mode: GameModeType) { // ATUALIZADO
     setActiveGameMode(mode);
-    modeModal?.classList.add("hidden");
+    updateHeader(mode);
+    
     const word = (mode === 'daily') ? getDailyWord() : selectRandomWord();
     setPalavraCerta(word);
-    resetGameStateForNewGame();
-    console.log(`Novo jogo iniciado no modo '${mode}'. Palavra: ${palavraCerta}`);
 
+    // Só reseta o jogo se NÃO for o modo diário.
+    if (mode !== 'daily') {
+        resetGameStateForNewGame();
+    }
+    
+    // Força a UI a recarregar com o estado correto
+    EventBus.emit('stateChanged'); 
+    updateKeyboardAppearance();
+
+    console.log(`Novo jogo iniciado no modo '${mode}'. Palavra: ${palavraCerta}`);
 }
 
+function updateHeader(mode: GameModeType) { // ATUALIZADO
+    const headerLink = document.getElementById("headerLink");
+    if (headerLink) {
+        if (mode === 'daily') headerLink.textContent = "LetrAZ Diário";
+        if (mode === 'random') headerLink.textContent = "LetrAZ Infinito";
+        if (mode === 'timed') headerLink.textContent = "LetrAZ Rush";
+    }
+}
+
+// ----- LÓGICA DE INICIALIZAÇÃO SIMPLIFICADA -----
 initializeState();
-
-const headerLink = document.getElementById("headerLink");
-
-
-
-
-const initialData = getState();
-
-const initialWord = (initialData.gameMode.gameType === 'daily') ? getDailyWord() : selectRandomWord();
-setPalavraCerta(initialWord);
-
+startGame('daily'); 
 initializeBoard(handleboxClick);
 createKeyboard(handleKeyPress);
-EventBus.emit('initialStateLoaded'); 
-EventBus.emit('stateChanged');
 
+// Inicia o jogo no modo diário por padrão.
+// Esta chamada única substitui a lógica de inicialização anterior, tornando-a mais limpa.
+
+// -------------------------------------------------
+
+
+// ----- CONFIGURAÇÃO DE EVENTOS -----
 const modeModal = document.getElementById("modeModal");
-
-    modeModal?.classList.remove("hidden");
-
 const modeModalButton = document.getElementById("modeModalButton");
-
-
-document.addEventListener('click', (event) => {
-    event.stopPropagation();
-    modeModal?.classList.add("hidden");
-});
-
+modeModal?.classList.remove("hidden");
 modeModalButton?.addEventListener('click', (event) => {
     event.stopPropagation();
     modeModal?.classList.remove("hidden");
 });
 
-
+document.addEventListener('click', () => {
+    modeModal?.classList.add("hidden");
+});
+EventBus.emit('initialStateLoaded'); 
 document.addEventListener("keydown", handleKeyPress);
-
 document.getElementById('daily-mode-btn')?.addEventListener('click', () => startGame('daily'));
 document.getElementById('timed-mode-btn')?.addEventListener('click', () => startGame('timed'));
 document.getElementById('random-mode-btn')?.addEventListener('click', () => startGame('random'));
-if (headerLink) {
-    headerLink.textContent = `LetrAZ ${modoDeJogo}`;
-}
+
+
+// ----- FUNÇÕES DE INTERAÇÃO (JÁ ESTAVAM CORRETAS) -----
 
 function enterStrategy(): void {
     const result = submitGuess();
-
     if (!result.success) {
         showMessage(result.message!, 'error');
         return;
     }
-    
     if (result.message) {
         const messageType = result.message.includes("Parabéns") ? 'success' : 'error';
         showMessage(result.message, messageType, 4000);
     }
 }
 
-
-
 function backspaceStrategy(): void {
-    const currentState = getState().gameState;
+    const currentState = getActiveGameState();
+    const pos = currentState.currentCol;
     const currentGuess = currentState.guesses[currentState.currentRow] || '';
+    const paddedGuess = currentGuess.padEnd(LETTERS, ' ');
 
-
-    if (currentGuess.length === 0) {
+    if (pos < LETTERS && paddedGuess.charAt(pos) !== ' ') {
+ 
+        const newGuess = paddedGuess.slice(0, pos) + ' ' + paddedGuess.slice(pos + 1);
+        updateCurrentGuess(newGuess.trimEnd());
+        
+        setCursorPosition(pos); 
         return;
     }
 
-    const newGuess = currentGuess.slice(0, -1);
-    updateCurrentGuess(newGuess);
+ 
+    if (pos > 0) {
 
-    setCursorPosition(newGuess.length);
-}
+        const newGuess = paddedGuess.slice(0, pos - 1) + ' ' + paddedGuess.slice(pos);
+        updateCurrentGuess(newGuess.trimEnd());
 
-function letterStrategy(key: string): void {
-    const currentState = getState().gameState;
-    const pos = currentState.currentCol;
-
-    if (pos >= LETTERS) {
-        return; 
+        moveCursorLeft();
     }
-
+}
+function letterStrategy(key: string): void {
+    const currentState = getActiveGameState();
+    const pos = currentState.currentCol;
+    if (pos >= LETTERS) return;
     let currentGuess = currentState.guesses[currentState.currentRow] || '';
     const letter = key.toUpperCase();
-
-
     if (currentGuess.length < pos) {
         currentGuess = currentGuess.padEnd(pos, ' ');
     }
     const newGuess = currentGuess.slice(0, pos) + letter + currentGuess.slice(pos + 1);
-
     updateCurrentGuess(newGuess.slice(0, LETTERS));
     moveCursorRight();
 }
@@ -134,23 +138,20 @@ const keyStrategies: Record<string, () => void> = {
 };
 
 function handleKeyPress(event: KeyboardEvent) {
-    if (getState().gameState.isGameOver) return;
+    if (getActiveGameState().isGameOver) return;
     const key = event.key.toLowerCase();
-    
     const strategy = keyStrategies[key];
     if (strategy) {
         strategy();
         return;
     }
-    
     if (/^[a-z]$/.test(key)) {
         letterStrategy(key);
     }
 }
 
 function handleboxClick(row: number, col: number) {
-    const currentState = getState().gameState;
+    const currentState = getActiveGameState();
     if (currentState.isGameOver || row !== currentState.currentRow) return;
-    
     setCursorPosition(col);
 }
