@@ -5,10 +5,18 @@
 }
 
 .box {
-    @apply w-16 h-16 md:h-18 md:w-18 rounded-lg flex items-center justify-center md:text-2xl font-bold ;
+    /* Define a largura de cada caixa como 15% da largura da tela,
+       garantindo que 5 caixas caibam confortavelmente.
+       A altura é ajustada automaticamente para manter a proporção quadrada (aspect-ratio). */
+    @apply w-[12vw] aspect-square flex rounded-lg items-center justify-center text-[5vw] font-bold;
+
+    /* Para telas maiores, o tamanho é fixado para evitar que fiquem grandes demais */
+    @apply md:w-18 md:h-18 md:text-2xl;
 }
-.boxPopUp{
-  @apply w-16 h-16 md:h-18 md:w-18 rounded-lg md:text-2xl font-bold ;
+.boxPopUp {
+    /* Mesmo ajuste para o pop-up */
+    @apply w-[15vw] aspect-square flex items-center justify-center text-[5vw] font-bold;
+    @apply md:w-16 md:h-16 md:text-2xl;
 }
 .board-row {
     @apply flex justify-center gap-1 mb-1;
@@ -21,9 +29,8 @@
 .box-inactive {
     @apply bg-sky-200 text-gray-400;
 }
-
 #keyboard {
-    @apply mt-2 w-full  md:w-1/2 ;
+    @apply mt-2 w-full md:w-1/2;
 }
 
 .keyboard-row {
@@ -31,9 +38,12 @@
 }
 
 .keyboard-key {
-    @apply  flex-1 h-14 rounded-md flex items-center justify-center    text-lg font-semibold md:w-15 md:h-15  bg-sky-300 opacity-90  text-gray-800 cursor-pointer hover:bg-sky-400;
-}
+    /* A altura das teclas também se ajusta à largura da tela */
+    @apply flex-1 h-[14vw]  rounded-md flex items-center justify-center text-sm font-semibold;
 
+    /* Aumenta em telas maiores */
+    @apply md:h-14 md:text-lg;
+}
 
 .modal {
   @apply fixed inset-0 flex justify-center items-center z-[1000];
@@ -131,7 +141,9 @@ button {
 .theme-daily #random-mode-btn, .theme-daily #daily-mode-btn, .theme-daily #timed-mode-btn, .theme-daily #statsModalButton, .theme-daily #modeModalButton, .theme-daily button i {
   @apply bg-blue-500 hover:bg-blue-700;
 }
-
+.rush-mode-ui {
+  @apply text-xl
+}
 
 /* TEMA VERDE (MODO LIVRE) */
 .theme-random body {
