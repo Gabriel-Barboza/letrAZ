@@ -324,6 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // INICIALIZAÇÃO (Roda apenas UMA VEZ na ordem correta)
     initializeState();
      startGame('daily'); 
+     
     initializeBoard(handleboxClick);
     createKeyboard(handleKeyPress);
     
@@ -347,12 +348,13 @@ document.getElementById('rush-start-btn')?.addEventListener('click', () => {
 });
     // Listeners dos Modais
     modeModalButton?.addEventListener('click', (event) => { event.stopPropagation(); modeModal?.classList.remove("hidden"); });
+    modeModal?.classList.remove("hidden");
     helpCloseButton?.addEventListener('click', () => { modeModal?.classList.add('hidden'); });
     statsModalButton?.addEventListener('click', (event) => { event.stopPropagation(); updateStatsModal(); statsModal?.classList.remove('hidden'); });
     statsCloseButton?.addEventListener('click', () => { statsModal?.classList.add('hidden'); });
-    document.addEventListener('click', (event) => {
-        if (event.target === modeModal) modeModal?.classList.add("hidden");
-        if (event.target === statsModal) statsModal?.classList.add("hidden");
+    document.addEventListener('click', () => {
+        modeModal?.classList.add("hidden");
+        statsModal?.classList.add("hidden");
     });
 
     // Listeners do Jogo
