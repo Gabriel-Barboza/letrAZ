@@ -2,7 +2,7 @@
 
 import { palavraCerta, dicionarioValido } from "./words";
 // 1. ATUALIZADO: Importamos o novo "helper" e removemos o antigo "getState".
-import { getActiveGameState, setGameOver, advanceToNextRow } from "./gameState";
+import { getActiveGameState} from "./gameState";
 import { PLAYS, LETTERS } from "../types";
 
 export interface SubmitResult {

@@ -2,7 +2,6 @@ import './components/style.css';
 import {
     initializeState,
     getActiveGameState,
-    getActiveStats,
     getState,
     updateCurrentGuess,
     moveCursorLeft,
@@ -118,14 +117,13 @@ function updateHeader(mode: GameModeType) {
 }
 
 
-let isRushModePaused = false;
+
 
 function startGame(mode: GameModeType) {
     // Busca os elementos da UI a cada início de jogo
     const rushUI = document.getElementById('rush-mode-ui');
     const startBtn = document.getElementById('rush-start-btn');
     const boardContainer = document.getElementById('container-tabuleiro');
-    const keyboardContainer = document.getElementById('keyboard')?.parentElement;
 
     // Garante que o botão de "Jogar Novamente" do Modo Livre esteja escondido
     document.getElementById('play-again-btn')?.classList.add('hidden');
