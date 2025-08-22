@@ -42,12 +42,12 @@ function createInitialState(): SaveData {
         }
     };
 }
-
 export function saveState() {
     const stateToSave = JSON.parse(JSON.stringify(state));
-    const cleanGameState = createInitialState().modes.random.gameState;
-    stateToSave.modes.random.gameState = cleanGameState;
-    stateToSave.modes.timed.gameState = cleanGameState;
+
+    stateToSave.modes.random.gameState = createInitialState().modes.random.gameState;
+    stateToSave.modes.timed.gameState = createInitialState().modes.timed.gameState;
+
     localStorage.setItem("gameData", JSON.stringify(stateToSave));
 }
 
@@ -57,10 +57,9 @@ export function setInteractionPaused(isPaused: boolean) {
 }
 
 export function initializeState() {
-    
     const savedDataString = localStorage.getItem("gameData");
-    state = createInitialState(); 
-    
+    state = createInitialState();
+
     if (savedDataString) {
         try {
             const savedData: Partial<SaveData> = JSON.parse(savedDataString);
@@ -74,27 +73,46 @@ export function initializeState() {
             state = createInitialState();
         }
     }
-    console.log('Data de hoje:', getTodayDateString());
-console.log('Data salva no jogo:', state.modes.daily.gameState.date);
-console.log('Vai resetar?', !state.modes.daily.gameState.date || state.modes.daily.gameState.date !== getTodayDateString());
-    // CORREÇÃO: Verifica se é um novo dia e reseta o modo diário
+
     const today = getTodayDateString();
-    if (!state.modes.daily.gameState.date || state.modes.daily.gameState.date !== today) {
-        console.log("Novo dia detectado! Resetando modo diário...");
-        // Preserva as estatísticas mas reseta o estado do jogo
+    const savedDate = state.modes.daily.gameState.date;
+
+    console.log("🔍 DEBUG ATUALIZAÇÃO DE DATA:");
+    console.log("Data de hoje:", today);
+    console.log("Data salva antes:", savedDate);
+
+    if (!savedDate || savedDate !== today) {
+        console.log("✅ NOVO DIA DETECTADO - ATUALIZANDO...");
+
+        // Preserva estatísticas
         const currentStats = state.modes.daily.stats;
+
+        // Cria novo estado do diário
         state.modes.daily = createInitialState().modes.daily;
-        state.modes.daily.stats = currentStats; // Mantém as estatísticas
-        
-        // Força a atualização da interface
+        state.modes.daily.stats = currentStats;
+
+        // Força a data correta
+        state.modes.daily.gameState.date = today;
+
+        console.log("Data após reset:", state.modes.daily.gameState.date);
+
+        // Emite eventos de atualização da UI
         EventBus.emit('stateChanged');
         EventBus.emit('guessSubmitted');
-        
-        // Salva o estado atualizado
+
+        // Salva imediatamente
         saveState();
+
+        console.log("✅ ESTADO SALVO COM NOVA DATA");
+
+        // Verifica se realmente salvou
+        const verificacao = JSON.parse(localStorage.getItem("gameData") || "{}");
+        console.log("Data no localStorage após save:", verificacao.modes?.daily?.gameState?.date);
+
+    } else {
+        console.log("❌ MESMO DIA - NÃO ATUALIZOU");
     }
 }
-
 export function getState(): SaveData { return state; }
 export function getActiveGameState(): CurrentGameState { return state.modes[state.activeMode].gameState; }
 export function getActiveStats() { return state.modes[state.activeMode].stats; }
