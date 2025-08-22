@@ -150,7 +150,9 @@ button {
 .theme-random #random-mode-btn, .theme-random #daily-mode-btn, .theme-random #play-again-btn, .theme-random #statsModalButton, .theme-random #timed-mode-btn, .theme-random #modeModalButton, .theme-random button i {
   @apply bg-green-500 hover:bg-green-700;
 }
-
+#play-again-btn {
+  @apply bg-green-500 hover:bg-green-700 md:w-1/6 justify-center mx-auto mt-4;
+}
 .board-paused .box {
   @apply bg-rose-100;
 }

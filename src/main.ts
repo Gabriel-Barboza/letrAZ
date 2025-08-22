@@ -271,13 +271,19 @@ function enterStrategy(): void {
     else {
         if (didWin) {
             setGameOver(true); // Termina o jogo com vitória.
-            showMessage("Parabéns, você acertou!", 'success', 4000);
+            showMessage("Parabéns, você acertou!", 'success', 4000);if (currentState.activeMode === 'random') {
+            document.getElementById('play-again-btn')?.classList.remove('hidden');
+        }
+        
             return;
         }
         if (isLastTry) {
             setGameOver(false); // Termina o jogo com derrota.
             showMessage(`Fim de jogo! A palavra era: ${palavraCerta}`, 'error', 4000);
-            return;
+            if (currentState.activeMode === 'random') {
+            document.getElementById('play-again-btn')?.classList.remove('hidden');
+        }
+        
         }
     }
 
