@@ -374,20 +374,3 @@ document.getElementById('rush-start-btn')?.addEventListener('click', () => {
     EventBus.emit('initialStateLoaded');});
 
     // Adiciona um listener para a tela, mas apenas se estiver em um dispositivo móvel
-document.addEventListener('touchstart', function (event) {
-    if (event.touches.length > 1) {
-        // Se houver mais de um toque, previna o comportamento padrão para permitir o zoom de pinça
-        event.preventDefault();
-    }
-}, { passive: false });
-
-// Adiciona um listener para prevenir o zoom de toque duplo em dispositivos iOS
-let lastTouchEnd = 0;
-document.addEventListener('touchend', function (event) {
-    const now = (new Date()).getTime();
-    if (now - lastTouchEnd <= 300) {
-        // Se o toque duplo for detectado em menos de 300ms, previna o comportamento padrão
-        event.preventDefault();
-    }
-    lastTouchEnd = now;
-}, false);

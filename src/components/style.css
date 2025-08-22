@@ -1,5 +1,7 @@
 @import "tailwindcss";
-
+body {
+  touch-action: manipulation;
+}
 .cursor {
     @apply !border-blue-500 !border-4 !animate-pulse !scale-120 !duration-455; 
 }
