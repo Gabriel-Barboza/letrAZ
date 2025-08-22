@@ -173,7 +173,7 @@ button {
 }
 
 .board-paused .box {
-  @apply bg-rose-100 ;
+  @apply bg-red-300 ;
 }
 
 .board-paused .box-active {
