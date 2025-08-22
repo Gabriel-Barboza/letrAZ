@@ -130,10 +130,6 @@ function startGame(mode: GameModeType) {
 
     stopRushTimer(); // Sempre para um timer antigo antes de começar
 
-
-    // Lógica para mostrar/esconder a UI do Modo Rush
-  
-
     // Define o modo ativo, cabeçalho e tema
     setActiveGameMode(mode);
     updateHeader(mode);
@@ -151,31 +147,37 @@ function startGame(mode: GameModeType) {
     const word = (mode === 'daily') ? getDailyWord() : selectRandomWord();
     setPalavraCerta(word);
 
+    // CORREÇÃO: Para modo diário, não resetamos o gameState se já estiver jogando o jogo de hoje
+    // Para outros modos, sempre resetamos
     if (mode !== 'daily') {
         resetGameStateForNewGame();
+    } else {
+        // Para modo diário, apenas força a atualização da interface
+        // O reset automático já foi feito no initializeState() se for um novo dia
+        EventBus.emit('stateChanged');
+        EventBus.emit('guessSubmitted');
     }
+    
     updateKeyboardAppearance();
 
     if (mode === 'timed') {
-    rushUI?.classList.remove('hidden');
-    startBtn?.classList.remove('hidden');
-    startBtn!.textContent = 'Iniciar Rush';
-
-    // 🚨 Só aqui você pausa a interação
-    boardContainer?.classList.add('board-paused');
-    setInteractionPaused(true); 
-} else {
-    rushUI?.classList.add('hidden');
-     setInteractionPaused(false);
-    boardContainer?.classList.remove('board-paused');
-}
+        rushUI?.classList.remove('hidden');
+        startBtn?.classList.remove('hidden');
+        startBtn!.textContent = 'Iniciar Rush';
+        
+        // 🚨 Só aqui você pausa a interação
+        boardContainer?.classList.add('board-paused');
+        setInteractionPaused(true); 
+    } else {
+        rushUI?.classList.add('hidden');
+        setInteractionPaused(false);
+        boardContainer?.classList.remove('board-paused');
+    }
    
-    
     // Força a atualização visual do tabuleiro e teclado
     EventBus.emit('stateChanged'); 
     setTimeout(updateKeyboardAppearance, 0);
 }
-
 
 function updateStatsModal() {
     const state = getState();

@@ -20,7 +20,7 @@ function createInitialState(): SaveData {
             isComplete: false,
             currentWordIndex: 0,
             timeLeft: 15,
-             isInteractionPaused: false,
+            isInteractionPaused: false,
         };
         if (includeDate) {
             gameState.date = getTodayDateString();
@@ -50,14 +50,17 @@ export function saveState() {
     stateToSave.modes.timed.gameState = cleanGameState;
     localStorage.setItem("gameData", JSON.stringify(stateToSave));
 }
+
 export function setInteractionPaused(isPaused: boolean) {
     getActiveGameState().isInteractionPaused = isPaused;
     EventBus.emit('stateChanged');
 }
 
 export function initializeState() {
+    
     const savedDataString = localStorage.getItem("gameData");
     state = createInitialState(); 
+    
     if (savedDataString) {
         try {
             const savedData: Partial<SaveData> = JSON.parse(savedDataString);
@@ -71,9 +74,24 @@ export function initializeState() {
             state = createInitialState();
         }
     }
+    console.log('Data de hoje:', getTodayDateString());
+console.log('Data salva no jogo:', state.modes.daily.gameState.date);
+console.log('Vai resetar?', !state.modes.daily.gameState.date || state.modes.daily.gameState.date !== getTodayDateString());
+    // CORREÇÃO: Verifica se é um novo dia e reseta o modo diário
     const today = getTodayDateString();
-    if (state.modes.daily.gameState.date !== today) {
+    if (!state.modes.daily.gameState.date || state.modes.daily.gameState.date !== today) {
+        console.log("Novo dia detectado! Resetando modo diário...");
+        // Preserva as estatísticas mas reseta o estado do jogo
+        const currentStats = state.modes.daily.stats;
         state.modes.daily = createInitialState().modes.daily;
+        state.modes.daily.stats = currentStats; // Mantém as estatísticas
+        
+        // Força a atualização da interface
+        EventBus.emit('stateChanged');
+        EventBus.emit('guessSubmitted');
+        
+        // Salva o estado atualizado
+        saveState();
     }
 }
 
@@ -120,6 +138,7 @@ export function setGameOver(didWin: boolean) {
     EventBus.emit("stateChanged");
     EventBus.emit("guessSubmitted");
 }
+
 export function updateCurrentGuess(guess: string) {
     getActiveGameState().guesses[getActiveGameState().currentRow] = guess;
     EventBus.emit("stateChanged");
