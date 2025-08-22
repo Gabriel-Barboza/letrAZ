@@ -11,69 +11,75 @@ function getTodayDateString(): string {
 }
 
 function createInitialState(): SaveData {
-    const createCleanGameState = (date?: string): CurrentGameState => ({
-        guesses: Array(PLAYS).fill(""),
-        currentRow: 0,
-        currentCol: 0,
-        isGameOver: false,
-        isComplete: false,
-        date: date || getTodayDateString(),
-    });
-
+    const createCleanGameState = (includeDate: boolean = false): CurrentGameState => {
+        const gameState: CurrentGameState = {
+            guesses: Array(PLAYS).fill(""),
+            currentRow: 0,
+            currentCol: 0,
+            isGameOver: false,
+            isComplete: false,
+            currentWordIndex: 0,
+            timeLeft: 15,
+             isInteractionPaused: false,
+        };
+        if (includeDate) {
+            gameState.date = getTodayDateString();
+        }
+        return gameState;
+    };
     const createCleanStats = (): GameStats => ({
-        gamesPlayed: 0,
-        wins: 0,
-        currentStreak: 0,
-        maxStreak: 0,
-        winDistribution: {},
+        gamesPlayed: 0, wins: 0, currentStreak: 0, maxStreak: 0, winDistribution: {},
     });
-
     return {
         activeMode: 'daily',
         modes: {
-            daily: {
-                stats: createCleanStats(),
-                gameState: createCleanGameState(getTodayDateString()),
-            },
-            random: {
-                stats: createCleanStats() as RandomModeStats,
-                gameState: createCleanGameState(),
-            },
+            daily: { stats: createCleanStats(), gameState: createCleanGameState(true) },
+            random: { stats: createCleanStats() as RandomModeStats, gameState: createCleanGameState(false) },
             timed: {
-                stats: {
-                    ...createCleanStats(),
-                    score: 0,
-                    timeTaken: 0,
-                    hintsUsed: 0,
-                    maxScore: 0,
-                } as timedModeStats,
-                gameState: createCleanGameState(),
+                stats: { ...createCleanStats(), score: 0, timeTaken: 0, hintsUsed: 0, maxScore: 0 } as timedModeStats,
+                gameState: createCleanGameState(false),
             },
         }
     };
 }
 
-function saveState() {
+export function saveState() {
     const stateToSave = JSON.parse(JSON.stringify(state));
     const cleanGameState = createInitialState().modes.random.gameState;
-
     stateToSave.modes.random.gameState = cleanGameState;
     stateToSave.modes.timed.gameState = cleanGameState;
-    
     localStorage.setItem("gameData", JSON.stringify(stateToSave));
 }
-
-export function getState(): SaveData {
-    return state;
+export function setInteractionPaused(isPaused: boolean) {
+    getActiveGameState().isInteractionPaused = isPaused;
+    EventBus.emit('stateChanged');
 }
 
-export function getActiveGameState(): CurrentGameState {
-    return state.modes[state.activeMode].gameState;
+export function initializeState() {
+    const savedDataString = localStorage.getItem("gameData");
+    state = createInitialState(); 
+    if (savedDataString) {
+        try {
+            const savedData: Partial<SaveData> = JSON.parse(savedDataString);
+            if (savedData.activeMode) state.activeMode = savedData.activeMode;
+            if (savedData.modes) {
+                state.modes = { ...state.modes, ...savedData.modes };
+            }
+        } catch (error) {
+            console.error("Erro ao carregar dados salvos. Começando um novo jogo.", error);
+            localStorage.removeItem("gameData");
+            state = createInitialState();
+        }
+    }
+    const today = getTodayDateString();
+    if (state.modes.daily.gameState.date !== today) {
+        state.modes.daily = createInitialState().modes.daily;
+    }
 }
 
-export function getActiveStats() {
-    return state.modes[state.activeMode].stats;
-}
+export function getState(): SaveData { return state; }
+export function getActiveGameState(): CurrentGameState { return state.modes[state.activeMode].gameState; }
+export function getActiveStats() { return state.modes[state.activeMode].stats; }
 
 export function setActiveGameMode(mode: GameModeType) {
     state.activeMode = mode;
@@ -83,7 +89,6 @@ export function setActiveGameMode(mode: GameModeType) {
 export function resetGameStateForNewGame() {
     const initialState = createInitialState();
     state.modes[state.activeMode].gameState = initialState.modes[state.activeMode].gameState;
-    
     EventBus.emit("stateChanged");
     EventBus.emit("guessSubmitted");
 }
@@ -98,21 +103,23 @@ export function setGameOver(didWin: boolean) {
     activeStats.gamesPlayed++;
     if (didWin) {
         activeStats.wins++;
-        activeStats.currentStreak++;
+        activeStats.currentStreak++; // Incrementa a sequência atual
         if (activeStats.currentStreak > activeStats.maxStreak) {
-            activeStats.maxStreak = activeStats.currentStreak;
+            activeStats.maxStreak = activeStats.currentStreak; // Atualiza o recorde se necessário
         }
-        const winRow = activeGameState.currentRow + 1;
-        activeStats.winDistribution[winRow] = (activeStats.winDistribution[winRow] || 0) + 1;
+        // A lógica de distribuição de vitórias só se aplica ao modo diário
+        if (getState().activeMode === 'daily') {
+            const winRow = activeGameState.currentRow + 1;
+            activeStats.winDistribution[winRow] = (activeStats.winDistribution[winRow] || 0) + 1;
+        }
     } else {
-        activeStats.currentStreak = 0;
+        activeStats.currentStreak = 0; // Zera a sequência se o jogador perder
     }
 
     saveState();
     EventBus.emit("stateChanged");
     EventBus.emit("guessSubmitted");
 }
-
 export function updateCurrentGuess(guess: string) {
     getActiveGameState().guesses[getActiveGameState().currentRow] = guess;
     EventBus.emit("stateChanged");
@@ -151,38 +158,54 @@ export function setCursorPosition(col: number) {
     }
 }
 
-export function initializeState() {
-    const savedDataString = localStorage.getItem("gameData");
-    state = createInitialState();
+// --- Funções Específicas do Modo Rush ---
 
-    if (savedDataString) {
-        try {
-            const savedData: Partial<SaveData> = JSON.parse(savedDataString);
-            
-            if (savedData.activeMode) {
-                state.activeMode = savedData.activeMode;
-            }
+export function resetRushStats() {
+    // Pega apenas as estatísticas do modo rush
+    const rushStats = state.modes.timed.stats;
+    const rushGameState = state.modes.timed.gameState;
 
-            if (savedData.modes) {
-                if (savedData.modes.daily) {
-                    state.modes.daily = savedData.modes.daily;
-                }
-                if (savedData.modes.random?.stats) {
-                    state.modes.random.stats = savedData.modes.random.stats;
-                }
-                if (savedData.modes.timed?.stats) {
-                    state.modes.timed.stats = savedData.modes.timed.stats;
-                }
-            }
-        } catch (error) {
-            console.error("Erro ao carregar dados salvos. Começando um novo jogo.", error);
-            localStorage.removeItem("gameData");
-            state = createInitialState();
+    // Reseta APENAS a pontuação e o contador de palavras da SESSÃO ATUAL
+    rushStats.score = 0;
+    if (rushGameState) {
+        rushGameState.currentWordIndex = 0;
+    }
+    
+    // NÃO mexe em gamesPlayed, wins, ou maxScore.
+    
+    saveState();
+}
+
+export function advanceRushWordIndex() {
+    const rushState = state.modes.timed.gameState;
+    if (rushState.currentWordIndex !== undefined) {
+        rushState.currentWordIndex++;
+    }
+}
+
+export function finalizeRushWordStats(score: number, didWin: boolean) {
+    const rushState = state.modes.timed;
+    rushState.stats.score += score;
+    if (didWin) {
+        rushState.stats.wins++;
+    }
+    const wordIndex = rushState.gameState.currentWordIndex || 0;
+    if (wordIndex >= 9) {
+        rushState.stats.gamesPlayed++;
+        if (rushState.stats.score > rushState.stats.maxScore) {
+            rushState.stats.maxScore = rushState.stats.score;
         }
     }
+    saveState();
+}
 
-    const today = getTodayDateString();
-    if (state.modes.daily.gameState.date !== today) {
-        state.modes.daily = createInitialState().modes.daily;
-    }
+export function resetRushBoard() {
+    const rushState = state.modes.timed.gameState;
+    const initialState = createInitialState().modes.timed.gameState;
+    rushState.guesses = initialState.guesses;
+    rushState.currentRow = initialState.currentRow;
+    rushState.currentCol = initialState.currentCol;
+    rushState.isGameOver = initialState.isGameOver;
+    rushState.isComplete = initialState.isComplete;
+    EventBus.emit('stateChanged');
 }

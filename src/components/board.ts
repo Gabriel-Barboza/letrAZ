@@ -10,6 +10,7 @@ import { palavraCerta } from '../game/words';
 let grid: HTMLElement;
 
 function renderBoard(gameState: CurrentGameState) {
+    console.log(`[board.ts] -> renderBoard foi chamada. O valor de palavraCerta é:`, palavraCerta); // <-- Adicione esta linha
     for (let i = 0; i < PLAYS; i++) {
         const rowEl = grid.children[i] as HTMLElement;
         const guess = gameState.guesses[i] || "";
@@ -21,14 +22,14 @@ function renderBoard(gameState: CurrentGameState) {
             box.className = 'box';
             if (isSubmitted && statuses[j]) {
                 box.classList.add(statuses[j]);
-            } else if (i === gameState.currentRow) {
+            } else if (i === gameState.currentRow && !gameState.isInteractionPaused) { // Só ativa se não estiver pausado
                 box.classList.add('box-active');
             } else {
                 box.classList.add('box-inactive');
             }
         }
     }
-    if (!gameState.isGameOver) {
+ if (!gameState.isGameOver && !gameState.isInteractionPaused) {
         CurrentBox(gameState.currentCol, gameState.currentRow);
     } else {
         const cursor = document.querySelector('.cursor');

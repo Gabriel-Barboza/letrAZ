@@ -6,39 +6,28 @@ import { getActiveGameState, setGameOver, advanceToNextRow } from "./gameState";
 import { PLAYS, LETTERS } from "../types";
 
 export interface SubmitResult {
-    success: boolean;
+    isValid: boolean;
+    isWin: boolean;
     message?: string;
 }
 
 // 2. ATUALIZADO: Esta função agora usa getActiveGameState() para obter os dados corretos.
 export function submitGuess(): SubmitResult {
-    const activeGameState = getActiveGameState(); // Usa o helper para pegar o estado do modo ativo.
+    const activeGameState = getActiveGameState();
     const guess = activeGameState.guesses[activeGameState.currentRow] || '';
 
     if (guess.length < LETTERS) {
-        return { success: false, message: "Digite 5 letras." };
+        return { isValid: false, isWin: false, message: "Digite 5 letras." };
     }
     
     if (!dicionarioValido.has(guess)) {
-        return { success: false, message: "Palavra inválida." };
+        return { isValid: false, isWin: false, message: "Palavra inválida." };
     }
 
-    const didWin = guess === palavraCerta;
+    const isWin = guess === palavraCerta;
 
-    if (didWin) {
-        setGameOver(true);
-        return { success: true, message: "Parabéns, você acertou!" };
-    }
-
-    if (activeGameState.currentRow + 1 >= PLAYS) {
-        setGameOver(false);
-        return { success: true, message: `Fim de jogo! A palavra era: ${palavraCerta}` };
-    }
-
-    advanceToNextRow();
-    return { success: true };
+    return { isValid: true, isWin: isWin };
 }
-
 // Nenhuma mudança necessária aqui. Esta função não depende do estado do jogo.
 export function evaluateGuess(guess: string, answer: string): ("correct" | "present" | "absent")[] {
     const result: ("correct" | "present" | "absent")[] = Array(LETTERS).fill("absent");
@@ -85,4 +74,39 @@ export function calculateAllKeyStatuses(guesses: string[], answer: string): Reco
         }
     }
     return keyStatus;
+}
+export function calculateRushModeScore(guess: string, answer: string, currentRow: number, timeLeft: number): number {
+    const letterStatuses = evaluateGuess(guess, answer);
+
+    // 1. Calcula os Pontos de Letra
+    let letterPoints = 0;
+    for (const status of letterStatuses) {
+        if (status === 'correct') {
+            letterPoints += 3;
+        } else if (status === 'present') {
+            letterPoints += 1;
+        }
+    }
+
+    // 2. Calcula o Multiplicador de Linha
+    const rowMultiplier = PLAYS - currentRow; // Linha 0 -> 5, Linha 1 -> 4, etc.
+
+    // 3. Calcula o Multiplicador de Tempo
+    let timeMultiplier = 1;
+    if (timeLeft >= 10) {
+        timeMultiplier = 3;
+    } else if (timeLeft >= 5) {
+        timeMultiplier = 2;
+    }
+
+    // Calcula a pontuação base do palpite
+    let guessScore = letterPoints * rowMultiplier * timeMultiplier;
+
+    // 4. Aplica o Bônus de Acerto
+    const didWin = guess === answer;
+    if (didWin) {
+        guessScore *= 5;
+    }
+
+    return guessScore;
 }

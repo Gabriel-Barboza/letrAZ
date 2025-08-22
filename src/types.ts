@@ -38,7 +38,10 @@ export interface CurrentGameState {
     currentCol: number;
     isGameOver: boolean;
     isComplete: boolean;
-    date: string;
+    date?: string;
+    currentWordIndex?: number;
+    timeLeft?: number;
+     isInteractionPaused?: boolean;
 }
 
 

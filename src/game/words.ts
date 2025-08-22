@@ -6047,9 +6047,9 @@ export let palavraCerta: string;
 
 
 export function setPalavraCerta(palavra: string) {
+    console.log(`[words.ts] A palavraCerta foi definida como: ${palavra}`); // <-- Adicione esta linha
     palavraCerta = palavra;
 }
-
 
 export function getDailyWord(): string {
     const dataInicio = new Date('2025-07-18T00:00:00');

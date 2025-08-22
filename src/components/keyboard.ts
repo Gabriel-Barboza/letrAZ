@@ -13,7 +13,7 @@ const layoutTeclado = [
     [ 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'enter']
 ];
 
-export function createKeyboard(handleKeyPress: (event: KeyboardEvent) => void) {
+export function createKeyboard(keyHandler: (key: string, event?: KeyboardEvent) => void) {
     const container = document.getElementById("keyboard");
     if (!container) {
         console.error("Erro crítico: O contêiner do teclado com id='keyboard' não foi encontrado no HTML.");
@@ -39,11 +39,13 @@ export function createKeyboard(handleKeyPress: (event: KeyboardEvent) => void) {
     EventBus.on('guessSubmitted', updateKeyboardAppearance);
     EventBus.on('initialStateLoaded', updateKeyboardAppearance);
 
-
     tecladoContainer.addEventListener('click', (event) => {
         const target = event.target as HTMLElement;
-        if (!target.dataset.key) return;
-        handleKeyPress({ key: target.dataset.key } as KeyboardEvent);
+        const key = target.dataset.key;
+        if (!key) return;
+        
+        // Agora chamamos o 'keyHandler' passando apenas a tecla, como esperado.
+        keyHandler(key);
     });
 }
 

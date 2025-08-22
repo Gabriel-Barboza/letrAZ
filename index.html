@@ -2,146 +2,251 @@
 <html lang="pt-br" class="h-full">
 
 <head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="public/az.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
- <title>LetrAZ - Jogo de Adivinhar Palavras em Português</title>
- <meta name="description" content="Teste seu vocabulário com o LetrAZ! Um divertido jogo de adivinhar a palavra de 5 letras em português. Jogue o desafio do dia ou pratique no modo infinito.">
-<script src="https://kit.fontawesome.com/9f894f64ec.js" crossorigin="anonymous"></script>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/az.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LetrAZ - Jogo de Adivinhar Palavras em Português</title>
+    <meta name="description"
+        content="Teste seu vocabulário com o LetrAZ! Um divertido jogo de adivinhar a palavra de 5 letras em português. Jogue o desafio do dia ou pratique no modo infinito.">
+    <script src="https://kit.fontawesome.com/9f894f64ec.js" crossorigin="anonymous"></script>
 </head>
 
 <body id="app" class="flex flex-col h-screen bg-sky-50">
 
-  <header class="text-center p-4 bg-sky-600  opacity-90 shadow-md  " >
-    <h1 class="text-3xl  text-white font-bold"> <a href="#" id="headerLink">LetrAZ </a></h1>
+    <header class="text-center p-4 bg-sky-600 opacity-90 shadow-md">
+        <h1 class="text-3xl text-white font-bold"><a href="#" id="headerLink">LetrAZ</a></h1>
+    </header>
 
-  </header>
-  <div  class="text-center flex justify-evenly p-1 bg-sky-100  shadow-md mb-4 ">
+    <div class="text-center flex justify-around items-center gap-2 p-2 bg-sky-100 shadow-md mb-4">
 
-      <button id="" class="px-4 left-1 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700 focus:outline-none">
-      <i class="fa-solid fa-chart-simple"></i>
-      </button>
+        <button id="statsModalButton"
+            class="px-2 md:px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700 focus:outline-none">
+            <i class="fa-solid fa-chart-simple"></i>
+        </button>
 
-    <Div >
-      <button id="random-mode-btn" class="px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700 focus:outline-none">
-       Modo Livre
-      </button>
+        <div class="flex justify-center gap-2">
+            <button id="random-mode-btn"
+                class="px-2 md:px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700 focus:outline-none">
+                <span>Livre</span>
+            </button>
+            <button id="daily-mode-btn"
+                class="px-2 md:px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700 focus:outline-none">
+                <span>Diário</span>
+            </button>
+            <button id="timed-mode-btn"
+                class="px-2 md:px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700 focus:outline-none">
+                <span>Rush</span>
+            </button>
+        </div>
 
-      <button id="daily-mode-btn" class="px-4 mx-2 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700 focus:outline-none">
-       Modo Diario
-      </button>
-      
-      <button id="timed-mode-btn" class="px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700 focus:outline-none">
-       Modo Rush
-      </button>
-      </Div>
+        <button id="modeModalButton"
+            class="px-2 md:px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700 focus:outline-none">
+            <i class="fa-solid fa-question"></i>
+        </button>
 
-        <button id="modeModalButton" class="px-4 left-1 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700 focus:outline-none">
-       <i class="fa-solid fa-question"></i>
-      </button>
+    </div>
 
+    <div id="modeModal" class="modal hidden">
+        <div class="modal-content bg-sky-100 p-6 rounded-lg shadow-xl relative max-w-3xl mx-auto text-left">
+            <span
+                class="close-button absolute top-2 right-4 text-gray-500 text-3xl cursor-pointer hover:text-gray-800">&times;</span>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Como Jogar</h2>
+            <p class="text-gray-600 mb-6 text-center">Descubra a palavra secreta em até <strong>5 tentativas</strong>.
+            </p>
+     
+            <div class="space-y-4 md:flex md:space-y-0 md:space-x-4 justify-center border-b pb-6 mb-6">
+               <div class="flex flex-col  items-center gap-2  md:flex-col text-center md:text-center">
+                    <div
+                        class="w-12 h-12 rounded-md flex items-center justify-center font-bold text-xl box correct shrink-0">
+                        V</div>
+                    <div>
+                        <p class="font-semibold text-gray-800">Verde (Correto)</p>
+                        <p class="text-gray-600">A letra está na palavra e na <strong>posição certa</strong>.</p>
+                    </div>
+                </div>
+                <div class="flex flex-col  items-center gap-2  md:flex-col text-center md:text-center">
+                    <div
+                        class="w-12 h-12 rounded-md flex items-center justify-center font-bold text-xl box present shrink-0">
+                        I</div>
+                    <div>
+                        <p class="font-semibold text-gray-800">Amarelo (Presente)</p>
+                        <p class="text-gray-600">A letra está na palavra, mas na <strong>posição errada</strong>.</p>
+                    </div>
+                </div>
+                <div class="flex flex-col  items-center gap-2  md:flex-col text-center md:text-center">
+                    <div
+                        class="w-12 h-12 rounded-md flex items-center justify-center font-bold text-xl box absent shrink-0">
+                        T</div>
+                    <div>
+                        <p class="font-semibold text-gray-800">Cinza (Ausente)</p>
+                        <p class="text-gray-600">A letra <strong>não faz parte</strong> da palavra.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="text-left">
+                <h3 class="text-xl font-semibold text-gray-700 mb-4 text-center">🎮 Modos de Jogo</h3>
+                <div class="space-y-5">
+                    <div class="flex items-start gap-3"><span class="text-2xl pt-1">♾️</span>
+                        <div>
+                            <h4 class="font-bold text-gray-800">Modo Livre</h4>
+                            <p class="text-gray-900">Não quer esperar? Jogue quantas vezes quiser! Cada partida traz uma
+                                palavra aleatória para você decifrar. Perfeito para treinar.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3"><span class="text-2xl pt-1">📅</span>
+                        <div>
+                            <h4 class="font-bold text-gray-800">Modo Diário (Clássico)</h4>
+                            <p class="text-gray-900">O desafio original. Uma única palavra por dia, a mesma para todos
+                                os jogadores. Volte amanhã para um novo desafio!</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3"><span class="text-2xl pt-1">⚡️</span>
+                        <div>
+                            <h4 class="font-bold text-gray-800">Modo Rush</h4>
+                            <p class="text-gray-900 mb-2">Teste sua agilidade contra o tempo! Um desafio de alta
+                                velocidade com pontuação.</p>
+                            <ul class="list-disc list-inside text-gray-900 space-y-1">
+                                <li>Você tem <strong>15 segundos</strong> para acertar cada palavra.</li>
+                                <li>Complete uma sequência de <strong>10 palavras</strong>.</li>
+                                <li>A pontuação final é baseada no seu tempo e nos acertos. Seja rápido!</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p class="text-gray-700 font-semibold mt-8 text-center">Escolha seu modo preferido e boa sorte!</p>
+        </div>
+    </div>
+
+    <div id="stats-modal" class="modal hidden">
+        <div class="modal-content w-full max-w-2xl bg-sky-100 p-6 rounded-lg shadow-xl relative">
+            <span id="stats-close-button"
+                class="close-button absolute top-2 right-4 text-gray-500 text-3xl cursor-pointer hover:text-gray-800">&times;</span>
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Estatísticas</h2>
+
+            <div class="flex flex-col md:flex-row justify-around gap-4 text-center">
+
+
+
+                <div class="flex-1 bg-emerald-100 p-4 rounded-lg shadow">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3">♾️ Modo Livre</h3>
+                    <div class="grid grid-cols-2 gap-y-3">
+                        <div>
+                            <p id="random-games" class="text-2xl font-bold">0</p>
+                            <p class="text-xs text-gray-600">Jogos</p>
+                        </div>
+                        <div>
+                            <p id="random-wins" class="text-2xl font-bold">0</p>
+                            <p class="text-xs text-gray-600">Acertos</p>
+                        </div>
+                        <div>
+                            <p id="random-streak" class="text-2xl font-bold">0</p>
+                            <p class="text-xs text-gray-600">Sequência</p>
+                        </div>
+                        <div>
+                            <p id="random-max-streak" class="text-2xl font-bold">0</p>
+                            <p class="text-xs text-gray-600">Recorde</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-1 bg-sky-200 p-4 rounded-lg shadow">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3">📅 Modo Diário</h3>
+                    <div class="grid grid-cols-2 gap-y-3">
+                        <div>
+                            <p id="daily-games" class="text-2xl font-bold">0</p>
+                            <p class="text-xs text-gray-600">Jogos</p>
+                        </div>
+                        <div>
+                            <p id="daily-wins" class="text-2xl font-bold">0%</p>
+                            <p class="text-xs text-gray-600">Vitórias</p>
+                        </div>
+                        <div>
+                            <p id="daily-streak" class="text-2xl font-bold">0</p>
+                            <p class="text-xs text-gray-600">Sequência</p>
+                        </div>
+                        <div>
+                            <p id="daily-max-streak" class="text-2xl font-bold">0</p>
+                            <p class="text-xs text-gray-600">Recorde</p>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="flex-1 bg-rose-100 p-4 rounded-lg shadow">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3">⚡️ Modo Rush</h3>
+                    <div class="grid grid-cols-2 gap-y-3">
+                        <div>
+                            <p id="timed-games" class="text-2xl font-bold">0</p>
+                            <p class="text-xs text-gray-600">Jogos</p>
+                        </div>
+                        <div>
+                            <p id="timed-wins" class="text-2xl font-bold">0</p>
+                            <p class="text-xs text-gray-600">Acertos</p>
+                        </div>
+                        <div>
+                            <p id="timed-last-score" class="text-2xl font-bold">0</p>
+                            <p class="text-xs text-gray-600">Última Pont.</p>
+                        </div>
+                        <div>
+                            <p id="timed-max-score" class="text-2xl font-bold">0</p>
+                            <p class="text-xs text-gray-600">Recorde</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+    </div>
+     <div id="rush-mode-ui" class="hidden text-center mb-2">
+    <div class="flex justify-center items-center gap-8">
+      <div>
+        <p class="text-sm text-gray-600">Palavra</p>
+        <p class="text-2xl font-bold"><span id="rush-word-count">1</span> / 10</p>
+      </div>
+      <div>
+        <p class="text-sm text-gray-600">Tempo</p>
+        <p class="text-2xl font-bold"><span id="rush-timer">15</span>s</p>
+      </div>
+      <div>
+        <p class="text-sm text-gray-600">Pontuação</p>
+        <p class="text-2xl font-bold" id="rush-score">0</p>
+      </div>
+      <button id="rush-start-btn" class="mt-4 px-6 py-2 bg-red-500 text-white font-bold rounded hover:bg-red-700 focus:outline-none">
+    Iniciar Rush
+  </button>
+
+    </div>
   </div>
+    <div id="toast" class="toast-container">
+        <span id="toast-message"></span>
+    </div>
 
-  <div id="modeModal" class="modal hidden">
-    <div class="modal-content">
-
-    <span class="close-button absolute top-2 right-4 text-gray-500 text-3xl cursor-pointer hover:text-gray-800">&times;</span>
-
-<h2 class="text-2xl font-bold text-gray-800 mb-4">Como Jogar</h2>
-
-<p class="text-gray-600 mb-6">
-    Descubra a palavra secreta em até <strong>5 tentativas</strong>.
-</p>
-
-
-<div class="space-y-4 flex justify-center  border-b pb-6 mb-6">
+    <div id="container-tabuleiro" class="flex-grow flex flex-col justify-center items-center w-full">
+        <div id="tabuleiro" class="grid grid-rows-5 gap-2"></div>
+    </div>
+  
     
-    <div class="flex flex-col items-center gap-2">
-        <div class="w-12 h-12 rounded-md flex items-center  justify-center font-bold text-xl box correct">V</div>
-        <div class="">
-            <p class="font-semibold text-gray-800">Verde (Correto)</p>
-            <p class=" px-2 text-gray-600">A letra está na palavra e na <strong>posição certa</strong>.</p>
-        </div>
+    <button id="play-again-btn" class="hidden mt-4 px-6 py-2 bg-green-500 text-white font-bold rounded hover:bg-green-700 focus:outline-none">
+      Jogar Novamente
+    </button>
     </div>
 
-    <div class="flex flex-col items-center gap-2">
-        <div class="w-12 h-12 rounded-md flex items-center justify-center font-bold text-xl box present">I</div>
-        <div>
-            <p class="font-semibold text-gray-800">Amarelo (Presente)</p>
-            <p class=" px-2  text-gray-600">A letra está na palavra, mas na <strong>posição errada</strong>.</p>
-        </div>
+    <div class="w-full flex flex-col items-center justify-center p-2">
+        <div id="keyboard"></div>
     </div>
 
-    <div class="flex flex-col items-center gap-2">
-        <div class="w-12 h-12 rounded-md flex items-center justify-center font-bold text-xl box absent">T</div>
-        <div>
-            <p class="font-semibold text-gray-800">Cinza (Ausente)</p>
-            <p class=" px-2 text-gray-600">A letra <strong>não faz parte</strong> da palavra.</p>
-        </div>
-    </div>
-</div>
+    <footer class="text-center mt-3 p-8 bg-sky-200 shadow-2xl text-gray-700">
+        <p>Desenvolvido por João Gabriel<a href="https://github.com/gabriel-barboza" class=" text-blue-800 "
+                target="_blank"> GITHUB </a>|| <a href="https://www.linkedin.com/in/joão-gabriel-barboza"
+                class="text-blue-800" target="_blank"> LINKEDIN </a></p>
+        <p>Baseado nos jogos <a href="https://term.ooo" class=" text-blue-800 " target="_blank"> Termo</a> e <a
+                href="https://www.powerlanguage.co.uk/wordle/" class=" text-blue-800 "> Wordle </a></p>
+    </footer>
 
-<div class="text-left">
-    <h3 class="text-xl font-semibold text-gray-700 mb-4">🎮 Modos de Jogo</h3>
-
-    <div class="space-y-5">
-        <div class="flex items-start gap-3">
-            <span class="text-2xl pt-1">📅</span>
-            <div>
-                <h4 class="font-bold text-gray-800">Modo Diário (Clássico)</h4>
-                <p class="text- text-gray-900">O desafio original. Uma única palavra por dia, a mesma para todos os jogadores. Volte amanhã para um novo desafio!</p>
-            </div>
-        </div>
-
-        <div class="flex items-start gap-3">
-            <span class="text-2xl pt-1">♾️</span>
-            <div>
-                <h4 class="font-bold text-gray-800">Modo Infinito</h4>
-                <p class=" text-gray-900">Não quer esperar? Jogue quantas vezes quiser! Cada partida traz uma palavra aleatória para você decifrar. Perfeito para treinar.</p>
-            </div>
-        </div>
-
-        <div class="flex items-start gap-3">
-            <span class="text-2xl pt-1">⚡️</span>
-            <div>
-                <h4 class="font-bold text-gray-800">Modo Rush</h4>
-                <p class="text text-gray-900 mb-2">Teste sua agilidade contra o tempo! Um desafio de alta velocidade com pontuação.</p>
-                <ul class="list-disc list-inside  text-gray-900 space-y-1">
-                    <li>Você tem <strong>15 segundos</strong> para acertar cada palavra.</li>
-                    <li>Complete uma sequência de <strong>10 palavras</strong>.</li>
-                    <li>A pontuação final é baseada no seu tempo e nos acertos. Seja rápido!</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-
-<p class="text-gray-700 font-semibold mt-8">
-    Escolha seu modo preferido e boa sorte!
-</p>
-    </div>
-</div>
-
-  <div id="toast" class="toast-container">
-    <span id="toast-message"></span>
-  </div>
-
-  <div id="container-tabuleiro" class="flex-grow flex flex-col justify-center items-center w-full">
-    <div id="tabuleiro" class="grid grid-rows-5 gap-2">
-      </div>
-  </div>
-
-  <div class="w-full flex flex-col items-center justify-center p-2">
-    <div id="keyboard">
-      </div>
-  </div>
-
-  <footer class="text-center mt-3  p-8 bg-sky-200 shadow-2xl text-gray-700">
-    <p>Desenvolvido por João Gabriel<a href="https://github.com/gabriel-barboza" class=" text-blue-800 " target="_blank">  GITHUB </a>|| <a href="https://www.linkedin.com/in/joão-gabriel-barboza"  class="text-blue-800" target="_blank"> LINKEDIN </a>  </p>
-    <P>Baseado nos jogos <a href="https://term.ooo" class=" text-blue-800 " target="_blank"> Termo</a> e <a href="https://www.powerlanguage.co.uk/wordle/"  class=" text-blue-800 "> Wordle </a></P>
-  </footer>
-
-  <script type="module" src="/src/main.ts"></script>
+    <script type="module" src="/src/main.ts"></script>
 </body>
 
 </html>

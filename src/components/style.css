@@ -37,12 +37,15 @@
 
 .modal {
   @apply fixed inset-0 flex justify-center items-center z-[1000];
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.6);
   backdrop-filter: blur(5px);
 }
 
 .modal-content {
-  @apply bg-sky-200 p-8 rounded text-center;
+  @apply bg-sky-50 p-8 rounded text-center;
+    max-height: 85vh; 
+  /* Adiciona uma barra de rolagem vertical APENAS se o conteúdo transbordar */
+  overflow-y: auto; 
 }
 
 /* Classe para esconder o modal */
@@ -50,15 +53,21 @@
   @apply hidden;
 }
 
-.keyboard-key.correct {
-  @apply  bg-green-500  opacity-80 text-white;
+.theme-daily .keyboard-key.correct,
+.theme-random .keyboard-key.correct,
+.theme-timed .keyboard-key.correct {
+  @apply bg-green-500 opacity-80 text-white;
 }
 
-.keyboard-key.present {
-  @apply  bg-yellow-500  opacity-80 text-white;
+.theme-daily .keyboard-key.present,
+.theme-random .keyboard-key.present,
+.theme-timed .keyboard-key.present {
+  @apply bg-yellow-500 opacity-80 text-white;
 }
 
-.keyboard-key.absent {
+.theme-daily .keyboard-key.absent,
+.theme-random .keyboard-key.absent,
+.theme-timed .keyboard-key.absent {
   @apply bg-gray-700 opacity-80 text-white;
 }
 .toast-container {
@@ -105,4 +114,68 @@
 
 button {
   @apply cursor-pointer;
+}
+
+.theme-daily body {
+  @apply bg-sky-50;
+}
+.theme-daily header {
+  @apply bg-sky-600;
+}
+.theme-daily footer, .theme-daily .box-inactive {
+  @apply bg-sky-200;
+}
+.theme-daily .keyboard-key {
+  @apply bg-sky-300 hover:bg-sky-400;
+}
+.theme-daily #random-mode-btn, .theme-daily #daily-mode-btn, .theme-daily #timed-mode-btn, .theme-daily #statsModalButton, .theme-daily #modeModalButton, .theme-daily button i {
+  @apply bg-blue-500 hover:bg-blue-700;
+}
+
+
+/* TEMA VERDE (MODO LIVRE) */
+.theme-random body {
+  @apply bg-emerald-50;
+}
+.theme-random header {
+  @apply bg-emerald-600;
+}
+.theme-random footer, .theme-random .box-inactive {
+  @apply bg-emerald-200;
+}
+.theme-random .keyboard-key {
+  @apply bg-emerald-300 hover:bg-emerald-400;
+}
+/* Para os botões no topo, podemos usar um verde um pouco mais forte */
+.theme-random #random-mode-btn, .theme-random #daily-mode-btn, .theme-random #play-again-btn, .theme-random #statsModalButton, .theme-random #timed-mode-btn, .theme-random #modeModalButton, .theme-random button i {
+  @apply bg-green-500 hover:bg-green-700;
+}
+
+.board-paused .box {
+  @apply bg-rose-100;
+}
+/* TEMA VERMELHO (MODO RUSH) */
+.theme-timed body {
+  @apply bg-rose-50;
+}
+.theme-timed header {
+  @apply bg-red-600;
+}
+.theme-timed footer, .theme-timed .box-inactive {
+  @apply bg-red-300;
+}
+.theme-timed .keyboard-key {
+  @apply bg-red-400 hover:bg-red-500;
+}
+/* Para os botões no topo, usamos um vermelho correspondente */
+.theme-timed #random-mode-btn, .theme-timed #daily-mode-btn, .theme-timed #statsModalButton, .theme-timed #timed-mode-btn, .theme-timed #modeModalButton, .theme-timed button i {
+  @apply bg-red-500 hover:bg-red-700;
+}
+
+.board-paused .box {
+  @apply bg-rose-100 ;
+}
+
+.board-paused .box-active {
+    @apply border-gray-400 bg-rose-100 ;
 }
