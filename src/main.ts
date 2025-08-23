@@ -40,6 +40,9 @@ function stopRushTimer() {
     if (rushTimerId) {
         clearInterval(rushTimerId);
         rushTimerId = null;
+        const timerSpan = document.getElementById('rush-timer') as HTMLElement;
+        timerSpan.classList.remove('timer-critical', 'timer-warning', 'timer-ok');
+
     }
 }
 
@@ -71,6 +74,7 @@ function advanceToNextRushWord() {
             rushState.stats.maxScore = rushState.stats.score;
         }
         saveState();
+
         showMessage(
             `Fim de Jogo! Pontuação Final: ${rushState.stats.score}`,
             "success",
@@ -79,6 +83,9 @@ function advanceToNextRushWord() {
 
         const startBtn = document.getElementById("rush-start-btn") as HTMLElement;
         if (startBtn) {
+            const boardContainer = document.getElementById("container-tabuleiro");
+             boardContainer?.classList.add("board-paused");
+        setInteractionPaused(true);
             startBtn.textContent = "Jogar Novamente";
             startBtn.classList.remove("hidden");
         }
@@ -88,16 +95,40 @@ function advanceToNextRushWord() {
     setTimeout(setupNextWord, 1000);
 }
 
+const RUSH_TIME_LIMIT = 25; // Define o tempo total do rush em uma constante
+
 function startRushTimer() {
     stopRushTimer();
-    const timerSpan = document.getElementById("rush-timer") as HTMLElement;
+    const timerSpan = document.getElementById('rush-timer') as HTMLElement;
     const rushState = getActiveGameState();
-    rushState.timeLeft = 15;
-    if (timerSpan) timerSpan.textContent = rushState.timeLeft.toString();
+    rushState.timeLeft = RUSH_TIME_LIMIT;
+
+    // Remove classes antigas e define a inicial
+    if (timerSpan) {
+        timerSpan.textContent = rushState.timeLeft.toString();
+        timerSpan.classList.remove('timer-critical', 'timer-warning', 'timer-ok');
+        timerSpan.classList.add('timer-ok');
+    }
+
     rushTimerId = setInterval(() => {
         if (rushState.timeLeft && rushState.timeLeft > 0) {
             rushState.timeLeft--;
-            if (timerSpan) timerSpan.textContent = rushState.timeLeft.toString();
+            if (timerSpan) {
+                timerSpan.textContent = rushState.timeLeft.toString();
+
+                // Lógica para alternar as classes com base no tempo
+                if (rushState.timeLeft < 10) {
+                    timerSpan.classList.remove('timer-warning', 'timer-ok');
+                    timerSpan.classList.add('timer-critical');
+                } else if (rushState.timeLeft < 18) {
+                    timerSpan.classList.remove('timer-critical', 'timer-ok');
+                    timerSpan.classList.add('timer-warning');
+                } else {
+                    timerSpan.classList.remove('timer-critical', 'timer-warning',);
+                    timerSpan.classList.add('timer-ok');
+                }
+            }
+
         } else {
             showMessage("O tempo acabou!", "error");
             advanceToNextRushWord();
@@ -140,7 +171,7 @@ function startGame(mode: GameModeType) {
         (document.getElementById("rush-score") as HTMLElement).textContent = "0";
         (document.getElementById("rush-word-count") as HTMLElement).textContent =
             "1";
-        (document.getElementById("rush-timer") as HTMLElement).textContent = "15";
+        (document.getElementById("rush-timer") as HTMLElement).textContent = "25";
     }
 
     const word = mode === "daily" ? getDailyWord() : selectRandomWord();
@@ -234,7 +265,6 @@ function letterStrategy(key: string) {
 function backspaceStrategy() {
     const currentState = getActiveGameState();
     const pos = currentState.currentCol;
-    if (pos === 0) return;
     const currentGuess = currentState.guesses[currentState.currentRow] || "";
     const paddedGuess = currentGuess.padEnd(LETTERS, " ");
     if (pos < LETTERS && paddedGuess.charAt(pos) !== " ") {
@@ -343,16 +373,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const statsModalButton = document.getElementById("statsModalButton");
     const statsCloseButton = document.getElementById("stats-close-button");
 
-    document.getElementById("rush-start-btn")?.addEventListener("click", () => {
-        const startBtn = document.getElementById("rush-start-btn");
-        startBtn?.classList.add("hidden");
 
-        setInteractionPaused(false);
-        document
-            .getElementById("container-tabuleiro")
-            ?.classList.remove("board-paused");
+document.getElementById('rush-start-btn')?.addEventListener('click', () => {
+    const startBtn = document.getElementById('rush-start-btn') as HTMLElement;
+        startGame('timed');
+         startBtn.classList.add('hidden');
+        setInteractionPaused(false); 
+        document.getElementById('container-tabuleiro')?.classList.remove('board-paused');
         startRushTimer();
-    });
+    
+});
+
     modeModalButton?.addEventListener("click", (event) => {
         event.stopPropagation();
         modeModal?.classList.remove("hidden");

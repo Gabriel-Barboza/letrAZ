@@ -214,7 +214,7 @@ export function moveCursorLeft() {
 
 export function moveCursorRight() {
     const activeGameState = getActiveGameState();
-    if (activeGameState.currentCol < LETTERS) {
+    if (activeGameState.currentCol < LETTERS-1) {
         activeGameState.currentCol++;
         EventBus.emit("stateChanged");
     }

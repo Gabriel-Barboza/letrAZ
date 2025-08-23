@@ -198,3 +198,15 @@ button {
 .board-paused .box-active {
   @apply border-gray-400 bg-rose-100;
 }
+
+.timer-ok {
+    @apply text-green-500 transition-colors duration-500;
+}
+
+.timer-warning {
+    @apply text-yellow-500 transition-colors duration-500;
+}
+
+.timer-critical {
+    @apply text-red-500 transition-colors duration-500 animate-pulse;
+}
