@@ -1,7 +1,14 @@
 // src/game/gameState.ts
 
 import { LETTERS, PLAYS } from "../types";
-import type { SaveData, CurrentGameState, GameModeType, GameStats, RandomModeStats, timedModeStats } from "../types";
+import type {
+    SaveData,
+    CurrentGameState,
+    GameModeType,
+    GameStats,
+    RandomModeStats,
+    timedModeStats,
+} from "../types";
 import { EventBus } from "../eventBus";
 
 let state: SaveData;
@@ -11,7 +18,9 @@ function getTodayDateString(): string {
 }
 
 function createInitialState(): SaveData {
-    const createCleanGameState = (includeDate: boolean = false): CurrentGameState => {
+    const createCleanGameState = (
+        includeDate: boolean = false
+    ): CurrentGameState => {
         const gameState: CurrentGameState = {
             guesses: Array(PLAYS).fill(""),
             currentRow: 0,
@@ -28,32 +37,50 @@ function createInitialState(): SaveData {
         return gameState;
     };
     const createCleanStats = (): GameStats => ({
-        gamesPlayed: 0, wins: 0, currentStreak: 0, maxStreak: 0, winDistribution: {},
+        gamesPlayed: 0,
+        wins: 0,
+        currentStreak: 0,
+        maxStreak: 0,
+        winDistribution: {},
     });
     return {
-        activeMode: 'daily',
+        activeMode: "daily",
         modes: {
-            daily: { stats: createCleanStats(), gameState: createCleanGameState(true) },
-            random: { stats: createCleanStats() as RandomModeStats, gameState: createCleanGameState(false) },
-            timed: {
-                stats: { ...createCleanStats(), score: 0, timeTaken: 0, hintsUsed: 0, maxScore: 0 } as timedModeStats,
+            daily: {
+                stats: createCleanStats(),
+                gameState: createCleanGameState(true),
+            },
+            random: {
+                stats: createCleanStats() as RandomModeStats,
                 gameState: createCleanGameState(false),
             },
-        }
+            timed: {
+                stats: {
+                    ...createCleanStats(),
+                    score: 0,
+                    timeTaken: 0,
+                    hintsUsed: 0,
+                    maxScore: 0,
+                } as timedModeStats,
+                gameState: createCleanGameState(false),
+            },
+        },
     };
 }
 export function saveState() {
     const stateToSave = JSON.parse(JSON.stringify(state));
 
-    stateToSave.modes.random.gameState = createInitialState().modes.random.gameState;
-    stateToSave.modes.timed.gameState = createInitialState().modes.timed.gameState;
+    stateToSave.modes.random.gameState =
+        createInitialState().modes.random.gameState;
+    stateToSave.modes.timed.gameState =
+        createInitialState().modes.timed.gameState;
 
     localStorage.setItem("gameData", JSON.stringify(stateToSave));
 }
 
 export function setInteractionPaused(isPaused: boolean) {
     getActiveGameState().isInteractionPaused = isPaused;
-    EventBus.emit('stateChanged');
+    EventBus.emit("stateChanged");
 }
 
 export function initializeState() {
@@ -68,7 +95,10 @@ export function initializeState() {
                 state.modes = { ...state.modes, ...savedData.modes };
             }
         } catch (error) {
-            console.error("Erro ao carregar dados salvos. Começando um novo jogo.", error);
+            console.error(
+                "Erro ao carregar dados salvos. Começando um novo jogo.",
+                error
+            );
             localStorage.removeItem("gameData");
             state = createInitialState();
         }
@@ -84,38 +114,40 @@ export function initializeState() {
     if (!savedDate || savedDate !== today) {
         console.log("✅ NOVO DIA DETECTADO - ATUALIZANDO...");
 
-        // Preserva estatísticas
         const currentStats = state.modes.daily.stats;
 
-        // Cria novo estado do diário
         state.modes.daily = createInitialState().modes.daily;
         state.modes.daily.stats = currentStats;
 
-        // Força a data correta
         state.modes.daily.gameState.date = today;
 
         console.log("Data após reset:", state.modes.daily.gameState.date);
 
-        // Emite eventos de atualização da UI
-        EventBus.emit('stateChanged');
-        EventBus.emit('guessSubmitted');
+        EventBus.emit("stateChanged");
+        EventBus.emit("guessSubmitted");
 
-        // Salva imediatamente
         saveState();
 
         console.log("✅ ESTADO SALVO COM NOVA DATA");
 
-        // Verifica se realmente salvou
         const verificacao = JSON.parse(localStorage.getItem("gameData") || "{}");
-        console.log("Data no localStorage após save:", verificacao.modes?.daily?.gameState?.date);
-
+        console.log(
+            "Data no localStorage após save:",
+            verificacao.modes?.daily?.gameState?.date
+        );
     } else {
         console.log("❌ MESMO DIA - NÃO ATUALIZOU");
     }
 }
-export function getState(): SaveData { return state; }
-export function getActiveGameState(): CurrentGameState { return state.modes[state.activeMode].gameState; }
-export function getActiveStats() { return state.modes[state.activeMode].stats; }
+export function getState(): SaveData {
+    return state;
+}
+export function getActiveGameState(): CurrentGameState {
+    return state.modes[state.activeMode].gameState;
+}
+export function getActiveStats() {
+    return state.modes[state.activeMode].stats;
+}
 
 export function setActiveGameMode(mode: GameModeType) {
     state.activeMode = mode;
@@ -124,7 +156,8 @@ export function setActiveGameMode(mode: GameModeType) {
 
 export function resetGameStateForNewGame() {
     const initialState = createInitialState();
-    state.modes[state.activeMode].gameState = initialState.modes[state.activeMode].gameState;
+    state.modes[state.activeMode].gameState =
+        initialState.modes[state.activeMode].gameState;
     EventBus.emit("stateChanged");
     EventBus.emit("guessSubmitted");
 }
@@ -139,17 +172,17 @@ export function setGameOver(didWin: boolean) {
     activeStats.gamesPlayed++;
     if (didWin) {
         activeStats.wins++;
-        activeStats.currentStreak++; // Incrementa a sequência atual
+        activeStats.currentStreak++;
         if (activeStats.currentStreak > activeStats.maxStreak) {
-            activeStats.maxStreak = activeStats.currentStreak; // Atualiza o recorde se necessário
+            activeStats.maxStreak = activeStats.currentStreak;
         }
-        // A lógica de distribuição de vitórias só se aplica ao modo diário
-        if (getState().activeMode === 'daily') {
+        if (getState().activeMode === "daily") {
             const winRow = activeGameState.currentRow + 1;
-            activeStats.winDistribution[winRow] = (activeStats.winDistribution[winRow] || 0) + 1;
+            activeStats.winDistribution[winRow] =
+                (activeStats.winDistribution[winRow] || 0) + 1;
         }
     } else {
-        activeStats.currentStreak = 0; // Zera a sequência se o jogador perder
+        activeStats.currentStreak = 0;
     }
 
     saveState();
@@ -195,21 +228,15 @@ export function setCursorPosition(col: number) {
     }
 }
 
-// --- Funções Específicas do Modo Rush ---
-
 export function resetRushStats() {
-    // Pega apenas as estatísticas do modo rush
     const rushStats = state.modes.timed.stats;
     const rushGameState = state.modes.timed.gameState;
 
-    // Reseta APENAS a pontuação e o contador de palavras da SESSÃO ATUAL
     rushStats.score = 0;
     if (rushGameState) {
         rushGameState.currentWordIndex = 0;
     }
-    
-    // NÃO mexe em gamesPlayed, wins, ou maxScore.
-    
+
     saveState();
 }
 
@@ -244,5 +271,5 @@ export function resetRushBoard() {
     rushState.currentCol = initialState.currentCol;
     rushState.isGameOver = initialState.isGameOver;
     rushState.isComplete = initialState.isComplete;
-    EventBus.emit('stateChanged');
+    EventBus.emit("stateChanged");
 }
