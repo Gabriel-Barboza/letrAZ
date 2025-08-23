@@ -210,3 +210,12 @@ button {
 .timer-critical {
     @apply text-red-500 transition-colors duration-500 animate-pulse;
 }
+@media (min-width: 990px) {
+    .keyboard-row:nth-child(2) {
+        @apply px-8; 
+    }
+
+    .keyboard-row:nth-child(3) {
+        @apply px-20; 
+    }
+}

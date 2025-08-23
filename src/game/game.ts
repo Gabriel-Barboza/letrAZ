@@ -97,10 +97,14 @@ export function calculateRushModeScore(
 
     const rowMultiplier = PLAYS - currentRow;
 
-    let timeMultiplier = 1;
-    if (timeLeft >= 10) {
+let timeMultiplier = 1;
+    if (timeLeft >= 20) {      
+        timeMultiplier = 5;
+    } else if (timeLeft >= 15) { 
+        timeMultiplier = 4;
+    } else if (timeLeft >= 10) { 
         timeMultiplier = 3;
-    } else if (timeLeft >= 5) {
+    } else if (timeLeft >= 5) { 
         timeMultiplier = 2;
     }
 

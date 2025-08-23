@@ -16,8 +16,8 @@ export interface GameStats {
 export interface timedModeStats extends GameStats {
     score: number;
     timeTaken: number;
-    hintsUsed: number;
     maxScore: number;
+    lastScore: number;
 }
 
 export interface RandomModeStats extends GameStats { }

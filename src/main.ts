@@ -70,6 +70,8 @@ function advanceToNextRushWord() {
 
     if (wordIndex >= 9) {
         getActiveGameState().isGameOver = true;
+        rushState.stats.gamesPlayed++;
+        rushState.stats.lastScore = rushState.stats.score;
         if (rushState.stats.score > rushState.stats.maxScore) {
             rushState.stats.maxScore = rushState.stats.score;
         }
@@ -80,6 +82,8 @@ function advanceToNextRushWord() {
             "success",
             5000
         );
+        resetRushBoard();
+        updateKeyboardAppearance();
 
         const startBtn = document.getElementById("rush-start-btn") as HTMLElement;
         if (startBtn) {
@@ -95,7 +99,7 @@ function advanceToNextRushWord() {
     setTimeout(setupNextWord, 1000);
 }
 
-const RUSH_TIME_LIMIT = 25; // Define o tempo total do rush em uma constante
+const RUSH_TIME_LIMIT = 25; 
 
 function startRushTimer() {
     stopRushTimer();
@@ -103,7 +107,6 @@ function startRushTimer() {
     const rushState = getActiveGameState();
     rushState.timeLeft = RUSH_TIME_LIMIT;
 
-    // Remove classes antigas e define a inicial
     if (timerSpan) {
         timerSpan.textContent = rushState.timeLeft.toString();
         timerSpan.classList.remove('timer-critical', 'timer-warning', 'timer-ok');
@@ -208,36 +211,40 @@ function updateStatsModal() {
     const dailyStats = state.modes.daily.stats;
     const randomStats = state.modes.random.stats;
     const timedStats = state.modes.timed.stats;
-    (document.getElementById("daily-games") as HTMLElement).textContent =
-        dailyStats.gamesPlayed.toString();
-    const winPercentage =
-        dailyStats.gamesPlayed > 0
-            ? Math.round((dailyStats.wins / dailyStats.gamesPlayed) * 100)
-            : 0;
-    (
-        document.getElementById("daily-wins") as HTMLElement
-    ).textContent = `${winPercentage}%`;
-    (document.getElementById("daily-streak") as HTMLElement).textContent =
-        dailyStats.currentStreak.toString();
-    (document.getElementById("daily-max-streak") as HTMLElement).textContent =
-        dailyStats.maxStreak.toString();
-    (document.getElementById("random-games") as HTMLElement).textContent =
-        randomStats.gamesPlayed.toString();
-    (document.getElementById("random-wins") as HTMLElement).textContent =
-        randomStats.wins.toString();
-    (document.getElementById("random-streak") as HTMLElement).textContent =
-        randomStats.currentStreak.toString();
-    (document.getElementById("random-max-streak") as HTMLElement).textContent =
-        randomStats.maxStreak.toString();
 
-    (document.getElementById("timed-games") as HTMLElement).textContent =
-        timedStats.gamesPlayed.toString();
-    (document.getElementById("timed-wins") as HTMLElement).textContent =
-        timedStats.wins.toString();
-    (document.getElementById("timed-last-score") as HTMLElement).textContent =
-        timedStats.score.toString();
-    (document.getElementById("timed-max-score") as HTMLElement).textContent =
-        timedStats.maxScore.toString();
+    // Daily Stats
+    const dailyGamesPlayed = dailyStats?.gamesPlayed || 0;
+    const dailyWins = dailyStats?.wins || 0;
+    const dailyCurrentStreak = dailyStats?.currentStreak || 0;
+    const dailyMaxStreak = dailyStats?.maxStreak || 0;
+
+    (document.getElementById('daily-games') as HTMLElement).textContent = dailyGamesPlayed.toString();
+    const winPercentage = dailyGamesPlayed > 0 ? Math.round((dailyWins / dailyGamesPlayed) * 100) : 0;
+    (document.getElementById('daily-wins') as HTMLElement).textContent = `${winPercentage}%`;
+    (document.getElementById('daily-streak') as HTMLElement).textContent = dailyCurrentStreak.toString();
+    (document.getElementById('daily-max-streak') as HTMLElement).textContent = dailyMaxStreak.toString();
+
+    // Random Stats
+    const randomGamesPlayed = randomStats?.gamesPlayed || 0;
+    const randomWins = randomStats?.wins || 0;
+    const randomCurrentStreak = randomStats?.currentStreak || 0;
+    const randomMaxStreak = randomStats?.maxStreak || 0;
+
+    (document.getElementById('random-games') as HTMLElement).textContent = randomGamesPlayed.toString();
+    (document.getElementById('random-wins') as HTMLElement).textContent = randomWins.toString();
+    (document.getElementById('random-streak') as HTMLElement).textContent = randomCurrentStreak.toString();
+    (document.getElementById('random-max-streak') as HTMLElement).textContent = randomMaxStreak.toString();
+
+    // Timed Stats
+    const timedGamesPlayed = timedStats?.gamesPlayed || 0;
+    const timedWins = timedStats?.wins || 0;
+   const timedLastScore = timedStats?.lastScore || 0;
+    const timedMaxScore = timedStats?.maxScore || 0;
+
+    (document.getElementById('timed-games') as HTMLElement).textContent = timedGamesPlayed.toString();
+    (document.getElementById('timed-wins') as HTMLElement).textContent = timedWins.toString();
+    (document.getElementById('timed-last-score') as HTMLElement).textContent = timedLastScore.toString();
+    (document.getElementById('timed-max-score') as HTMLElement).textContent = timedMaxScore.toString();
 }
 
 function handleboxClick(row: number, col: number) {

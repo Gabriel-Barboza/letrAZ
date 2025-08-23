@@ -61,6 +61,7 @@ function createInitialState(): SaveData {
                     timeTaken: 0,
                     hintsUsed: 0,
                     maxScore: 0,
+                    lastScore: 0,
                 } as timedModeStats,
                 gameState: createCleanGameState(false),
             },
@@ -107,12 +108,12 @@ export function initializeState() {
     const today = getTodayDateString();
     const savedDate = state.modes.daily.gameState.date;
 
-    console.log("🔍 DEBUG ATUALIZAÇÃO DE DATA:");
+    console.log(" DEBUG ATUALIZAÇÃO DE DATA:");
     console.log("Data de hoje:", today);
     console.log("Data salva antes:", savedDate);
 
     if (!savedDate || savedDate !== today) {
-        console.log("✅ NOVO DIA DETECTADO - ATUALIZANDO...");
+        console.log(" NOVO DIA DETECTADO - ATUALIZANDO...");
 
         const currentStats = state.modes.daily.stats;
 
@@ -128,7 +129,7 @@ export function initializeState() {
 
         saveState();
 
-        console.log("✅ ESTADO SALVO COM NOVA DATA");
+        console.log(" ESTADO SALVO COM NOVA DATA");
 
         const verificacao = JSON.parse(localStorage.getItem("gameData") || "{}");
         console.log(
@@ -136,7 +137,7 @@ export function initializeState() {
             verificacao.modes?.daily?.gameState?.date
         );
     } else {
-        console.log("❌ MESMO DIA - NÃO ATUALIZOU");
+        console.log(" MESMO DIA - NÃO ATUALIZOU");
     }
 }
 export function getState(): SaveData {
@@ -150,6 +151,18 @@ export function getActiveStats() {
 }
 
 export function setActiveGameMode(mode: GameModeType) {
+    const savedDataString = localStorage.getItem("gameData");
+    if (savedDataString) {
+        try {
+            const savedData: Partial<SaveData> = JSON.parse(savedDataString);
+            if (savedData.modes?.daily?.gameState) {
+                state.modes.daily.gameState = savedData.modes.daily.gameState;
+            }
+        } catch (error) {
+            console.error("Erro ao recarregar estado antes da troca de modo.", error);
+        }
+    }
+
     state.activeMode = mode;
     saveState();
 }
@@ -243,6 +256,7 @@ export function resetRushStats() {
 export function advanceRushWordIndex() {
     const rushState = state.modes.timed.gameState;
     if (rushState.currentWordIndex !== undefined) {
+        console.log(rushState.currentWordIndex);
         rushState.currentWordIndex++;
     }
 }
@@ -253,14 +267,6 @@ export function finalizeRushWordStats(score: number, didWin: boolean) {
     if (didWin) {
         rushState.stats.wins++;
     }
-    const wordIndex = rushState.gameState.currentWordIndex || 0;
-    if (wordIndex >= 9) {
-        rushState.stats.gamesPlayed++;
-        if (rushState.stats.score > rushState.stats.maxScore) {
-            rushState.stats.maxScore = rushState.stats.score;
-        }
-    }
-    saveState();
 }
 
 export function resetRushBoard() {

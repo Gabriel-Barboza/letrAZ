@@ -6390,6 +6390,7 @@ export const tentativasValidas: string[] = [
     "zombe",
     "zombo",
     "zonas",
+    "vasco",
     "zonza",
     "zonzo",
     "zumba",
