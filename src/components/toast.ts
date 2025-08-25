@@ -1,4 +1,3 @@
-// src/components/toast.ts
 
 let toastContainer: HTMLElement;
 let messageTimer: number;

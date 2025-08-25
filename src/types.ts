@@ -1,4 +1,4 @@
-// src/types.ts
+
 
 export const PLAYS = 5;
 export const LETTERS = 5;

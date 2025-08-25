@@ -1,4 +1,3 @@
-// src/game/gameState.ts
 
 import { LETTERS, PLAYS } from "../types";
 import type {

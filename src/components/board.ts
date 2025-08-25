@@ -1,4 +1,3 @@
-// src/components/board.ts
 
 import { PLAYS, LETTERS } from '../types';
 import { EventBus } from '../eventBus';

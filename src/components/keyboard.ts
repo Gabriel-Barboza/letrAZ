@@ -1,5 +1,4 @@
 // src/components/keyboard.ts
-
 import { getActiveGameState } from "../game/gameState";
 import { palavraCerta } from "../game/words";
 import { calculateAllKeyStatuses } from "../game/game";

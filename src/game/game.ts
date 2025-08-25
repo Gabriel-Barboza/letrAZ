@@ -1,4 +1,3 @@
-// src/game/game.ts
 
 import { palavraCerta, dicionarioValido } from "./words";
 import { getActiveGameState } from "./gameState";
