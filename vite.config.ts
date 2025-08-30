@@ -8,7 +8,14 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       // Adicionando seus novos SVGs para serem incluídos no cache
-      includeAssets: ['faviconF.svg', 'letrazLogoFF.svg'], 
+      includeAssets: [
+        'faviconF.svg', 
+        'letrazLogoFF.svg',
+        'pwa-192x192.png',
+        'pwa-512x512.png',
+        'screenshot-desktop.png',
+        'screenshot-mobile.png'
+      ], 
       manifest: {
         name: 'LetrAZ',
         short_name: 'LetrAZ',
@@ -46,7 +53,29 @@ export default defineConfig({
         label: 'Tela do Jogo no Celular'
       }
     ]
+    
+      },
+       workbox: {
+        runtimeCaching: [
+          {
+            // Regra para salvar os scripts e fontes do Font Awesome
+            urlPattern: /^https:\/\/kit\.fontawesome\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'fontawesome-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 dias
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          }
+          // Você pode adicionar outras regras aqui para outras fontes, se precisar
+        ]
       }
+      
     })
   ]
 })
