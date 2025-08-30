@@ -3,60 +3,63 @@
 
 <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/az.png" />
-   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="\public\favIconF.svg" />
+    <link rel="stylesheet" href="https://use.typekit.net/qxg6xmd.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 ,viewport-fit=cover" />
     <title>LetrAZ - Jogo de Adivinhar Palavras em Português</title>
     <meta name="description"
         content="Teste seu vocabulário com o LetrAZ! Um divertido jogo de adivinhar a palavra de 5 letras em português. Jogue o desafio do dia , pratique no modo livre ou experimente o modo inovador Rush.">
     <script src="https://kit.fontawesome.com/9f894f64ec.js" crossorigin="anonymous"></script>
 </head>
 
-<body id="app" class="flex flex-col h-screen bg-sky-50">
-
+<body id="app" class="flex flex-col min-h-dvh bg-sky-50">
+  <div id="splash-screen">
+    <img src="/letrazLogoFF.svg" alt="Carregando LetrAZ..." style="max-width: 80%; max-height: 80%;">
+  </div>
     <header class="text-center p-4 bg-sky-600 opacity-90 shadow-md">
-        <h1 class="text-3xl text-white font-bold"><a href="#" id="headerLink">LetrAZ</a></h1>
+        <h1 class="text-3xl  text-white font-bold"><a href="#" id="headerLink">LetrAZ</a></h1>
     </header>
     <nav>
-    <div class="text-center flex justify-around items-center gap-2 p-2 bg-sky-100 shadow-md mb-4">
+        <div class="text-center flex justify-around items-center gap-2 p-2 bg-sky-100 shadow-md mb-4">
 
-        <button id="statsModalButton"
-            class="px-2 md:px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700 focus:outline-none">
-            <i class="fa-solid fa-chart-simple"></i>
-        </button>
+            <button id="statsModalButton"
+                class="px-2 md:px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700 focus:outline-none">
+                <i class="fa-solid fa-chart-simple"></i>
+            </button>
 
-        <div class="flex justify-center gap-2">
-            <button id="random-mode-btn"
+            <div class="flex justify-center gap-2">
+                <button id="random-mode-btn"
+                    class="px-2 md:px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700 focus:outline-none">
+                    <span>Livre</span>
+                </button>
+                <button id="daily-mode-btn"
+                    class="px-2 md:px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700 focus:outline-none">
+                    <span>Diário</span>
+                </button>
+                <button id="timed-mode-btn"
+                    class="px-2 md:px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700 focus:outline-none">
+                    <span>Rush</span>
+                </button>
+            </div>
+
+            <button id="modeModalButton"
                 class="px-2 md:px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700 focus:outline-none">
-                <span>Livre</span>
+                <i class="fa-solid fa-question"></i>
             </button>
-            <button id="daily-mode-btn"
-                class="px-2 md:px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700 focus:outline-none">
-                <span>Diário</span>
-            </button>
-            <button id="timed-mode-btn"
-                class="px-2 md:px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700 focus:outline-none">
-                <span>Rush</span>
-            </button>
+
         </div>
-
-        <button id="modeModalButton"
-            class="px-2 md:px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700 focus:outline-none">
-            <i class="fa-solid fa-question"></i>
-        </button>
-
-    </div>
-        </nav>
+    </nav>
 
     <div id="modeModal" class="modal hidden">
         <div class="modal-content bg-sky-100 p-6 rounded-lg shadow-xl relative max-w-3xl mx-auto text-left">
             <span
                 class="close-button absolute top-2 right-4 text-gray-500 text-3xl cursor-pointer hover:text-gray-800">&times;</span>
-            <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Como Jogar</h2>
+            <img src="/public/letrazLogoFF.svg" alt="LetrAZ Logo" class="w-80 h-16 mx-auto mb-4" />
             <p class="text-gray-600 mb-6 text-center">Descubra a palavra secreta em até <strong>5 tentativas</strong>.
             </p>
-     
+
             <div class="space-y-4 md:flex md:space-y-0 md:space-x-4 justify-center border-b pb-6 mb-6">
-               <div class="flex flex-col  items-center gap-2  md:flex-col text-center md:text-center">
+                <div class="flex flex-col  items-center gap-2  md:flex-col text-center md:text-center">
                     <div
                         class="w-12 h-12 rounded-md flex items-center justify-center font-bold text-xl box correct shrink-0">
                         V</div>
@@ -101,7 +104,7 @@
                                 os jogadores. Volte amanhã para um novo desafio!</p>
                         </div>
                     </div>
-                    
+
                     <div class="flex items-start gap-3"><span class="text-2xl pt-1">⚡️</span>
                         <div>
                             <h4 class="font-bold text-gray-800">Modo Rush</h4>
@@ -199,58 +202,63 @@
 
             </div>
         </div>
-        
-    </div>
-    
-     <div id="rush-mode-ui" class="hidden text-center mb-2">
-    <div class="flex justify-center items-center gap-8">
-      <div>
-        <p class="text-sm text-gray-600">Palavra</p>
-        <p class="md:text-2xl text-xl font-bold "><span id="rush-word-count">1</span> / 10</p>
-      </div>
-      <div>
-        <p class="text-sm text-gray-600">Tempo</p>
-        <p class="md:text-2xl text-xl font-bold"><span id="rush-timer">25</span>s</p>
-      </div>
-      <div>
-        <p class="text-sm text-gray-600">Pontuação</p>
-        <p class="md:text-2xl text-xl  font-bold" id="rush-score">0</p>
-      </div>
-      <button id="rush-start-btn" class="mt-4 md:px-3 md:text-xl text-sm  px-1 py-2 bg-red-500 text-white font-bold rounded hover:bg-red-700 focus:outline-none">
-    Iniciar Rush
-  </button>
 
     </div>
-  </div>
-<main class="my-5 flex-grow flex flex-col">
-    <div id="toast" class="toast-container">
-        <span id="toast-message"></span>
-    </div>
 
-    <div id="container-tabuleiro" class="flex-grow flex flex-col justify-center items-center w-full">
-        <div id="tabuleiro" class="grid grid-rows-5 gap-2"></div>
-    </div>
-  
-    
-    <button id="play-again-btn" class="hidden mt-4 justify-center align-middle px-6 py-2 bg-green-500 text-white font-bold rounded hover:bg-green-700 focus:outline-none">
-      Jogar Novamente
-    </button>
-    </div>
 
-    <div class="w-full flex mt-10 flex-col items-center justify-center p-2">
-        <div id="keyboard"></div>
-    </div>
-    
-</main>
-    <footer class="text-center bottom-0  w-full p-8 bg-sky-200 shadow-2xl text-gray-700">
+    <main class=" flex-grow flex flex-col">
+        <div id="rush-mode-ui" class="hidden text-center mb-2">
+            <div class="flex justify-center items-center gap-8">
+                <div>
+                    <p class="text-sm text-gray-600">Palavra</p>
+                    <p class="md:text-2xl text-xl font-bold "><span id="rush-word-count">1</span> / 10</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600">Tempo</p>
+                    <p class="md:text-2xl text-xl font-bold"><span id="rush-timer">25</span>s</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600">Pontuação</p>
+                    <p class="md:text-2xl text-xl  font-bold" id="rush-score">0</p>
+                </div>
+                <button id="rush-start-btn"
+                    class="mt-4 md:px-3 md:text-xl text-sm  px-1 py-2 bg-red-500 text-white font-bold rounded hover:bg-red-700 focus:outline-none">
+                    Iniciar Rush
+                </button>
+
+            </div>
+        </div>
+        <div id="toast" class="toast-container">
+            <span id="toast-message"></span>
+        </div>
+
+        <div id="container-tabuleiro" class="flex-grow flex flex-col justify-center items-center w-full">
+            <div id="tabuleiro" class="grid grid-rows-5 gap-2"></div>
+        </div>
+
+
+        <button id="play-again-btn"
+            class="hidden mt-4 justify-center align-middle px-6 py-2 bg-green-500 text-white font-bold rounded hover:bg-green-700 focus:outline-none">
+            Jogar Novamente
+        </button>
+        </div>
+
+        <div class="w-full flex mt-4 flex-col items-center justify-center p-2">
+            <div id="keyboard"></div>
+        </div>
+
+    </main>
+    <footer class="text-center bottom-0  w-full p-4 bg-sky-200 shadow-2xl text-gray-700">
         <p>Desenvolvido por João Gabriel<a href="https://github.com/gabriel-barboza" class=" text-blue-800 "
                 target="_blank"> GITHUB </a>|| <a href="https://www.linkedin.com/in/joão-gabriel-barboza"
                 class="text-blue-800" target="_blank"> LINKEDIN </a></p>
         <p>Baseado nos jogos <a href="https://term.ooo" class=" text-blue-800 " target="_blank"> Termo</a> e <a
                 href="https://www.powerlanguage.co.uk/wordle/" class=" text-blue-800 "> Wordle </a></p>
     </footer>
+    <div class="h-[env(safe-area-inset-bottom)]"></div>
 
     <script type="module" src="/src/main.ts"></script>
+
 </body>
 
 </html>

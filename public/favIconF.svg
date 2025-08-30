@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="512"
+   height="512"
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   sodipodi:docname="favIconF.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     inkscape:zoom="1.1145218"
+     inkscape:cx="98.697038"
+     inkscape:cy="268.72512"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Camada 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#374151;fill-opacity:1;stroke-width:0.833431"
+       id="rect2-8"
+       width="355.30936"
+       height="337.36441"
+       x="2.8283126"
+       y="173.11813"
+       transform="rotate(0.10366019)"
+       inkscape:transform-center-x="-11.664195"
+       inkscape:transform-center-y="-4.4862289"
+       ry="38.630203" />
+    <rect
+       style="fill:#eab308;fill-opacity:1;stroke-width:0.833431"
+       id="rect2-8-1"
+       width="355.30936"
+       height="337.36441"
+       x="155.24147"
+       y="0.83258241"
+       transform="rotate(0.10366019)"
+       inkscape:transform-center-x="-11.664195"
+       inkscape:transform-center-y="-4.4862289"
+       ry="38.630203" />
+    <rect
+       style="fill:#22c55e;fill-opacity:1;stroke-width:0.833431"
+       id="rect2"
+       width="355.30936"
+       height="337.36441"
+       x="74.922256"
+       y="80.29557"
+       transform="rotate(0.10366019)"
+       inkscape:transform-center-x="-11.664195"
+       inkscape:transform-center-y="-4.4862289"
+       ry="38.630203" />
+    <text
+       xml:space="preserve"
+       style="font-size:217.702px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;stroke-width:0.816383"
+       x="248.76212"
+       y="324.47327"
+       id="text1"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         x="248.76212"
+         y="324.47327"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:217.702px;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold';text-align:center;text-anchor:middle;fill:#ffffff;stroke-width:0.816383">AZ</tspan></text>
+  </g>
+</svg>

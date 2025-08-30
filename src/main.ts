@@ -119,7 +119,7 @@ function startRushTimer() {
             if (timerSpan) {
                 timerSpan.textContent = rushState.timeLeft.toString();
 
-                // Lógica para alternar as classes com base no tempo
+                
                 if (rushState.timeLeft < 10) {
                     timerSpan.classList.remove('timer-warning', 'timer-ok');
                     timerSpan.classList.add('timer-critical');
@@ -367,11 +367,33 @@ function handleKeyPress(key: string, event?: KeyboardEvent) {
     }
 }
 document.addEventListener("DOMContentLoaded", () => {
+
+     
+
     initializeState();
     startGame("daily");
 
     initializeBoard(handleboxClick);
     createKeyboard(handleKeyPress);
+
+const splashScreen = document.getElementById('splash-screen');
+const wasLaunchedFromHomeScreen = () => window.matchMedia('(display-mode: standalone)').matches || new URLSearchParams(window.location.search).has('source');
+
+// Verifica se o app foi aberto pelo ícone E se a splash screen ainda não foi mostrada nesta sessão
+if (splashScreen && wasLaunchedFromHomeScreen() && !sessionStorage.getItem('splashShown')) {
+  
+  // 1. Marca que a splash já foi exibida para esta sessão
+  sessionStorage.setItem('splashShown', 'true');
+
+  // 2. Mostra a splash screen
+  splashScreen.classList.add('visible');
+
+  // 3. Esconde após a animação
+  setTimeout(() => {
+    splashScreen.classList.remove('visible');
+  }, 1500);
+}
+
 
     const modeModal = document.getElementById("modeModal");
     const modeModalButton = document.getElementById("modeModalButton");
@@ -429,4 +451,6 @@ document.getElementById('rush-start-btn')?.addEventListener('click', () => {
         ?.addEventListener("click", () => startGame("random"));
 
     EventBus.emit("initialStateLoaded");
+
+ 
 });

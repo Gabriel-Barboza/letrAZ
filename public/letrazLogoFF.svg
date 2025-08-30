@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="1500"
+   height="500"
+   viewBox="0 0 1500 500"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   sodipodi:docname="letrazLogoFF.svg"
+   inkscape:export-filename="letrazLogo.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     inkscape:zoom="0.592"
+     inkscape:cx="613.17568"
+     inkscape:cy="257.60135"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Camada 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="display:inline;fill:#374151;fill-opacity:1;stroke-width:1.19015"
+       id="rect2-8"
+       width="1031.9187"
+       height="236.87463"
+       x="18.072325"
+       y="186.30623"
+       transform="matrix(0.9999999,4.3737812e-4,-0.00748357,0.999972,0,0)"
+       inkscape:transform-center-x="-33.876136"
+       inkscape:transform-center-y="-3.149867"
+       ry="27.123535" />
+    <rect
+       style="display:inline;fill:#eab308;fill-opacity:1;stroke-width:1.19015"
+       id="rect2-8-1"
+       width="1031.9187"
+       height="236.87463"
+       x="460.72314"
+       y="65.338898"
+       transform="matrix(0.9999999,4.3737812e-4,-0.00748357,0.999972,0,0)"
+       inkscape:transform-center-x="-33.876161"
+       inkscape:transform-center-y="-3.149856"
+       ry="27.123535" />
+    <rect
+       style="display:inline;fill:#22c55e;fill-opacity:1;stroke-width:1.19015"
+       id="rect2"
+       width="1031.9187"
+       height="236.87463"
+       x="227.45341"
+       y="121.13246"
+       transform="matrix(0.9999999,4.3737812e-4,-0.00748357,0.999972,0,0)"
+       inkscape:transform-center-x="-33.876168"
+       inkscape:transform-center-y="-3.149869"
+       ry="27.123535" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:217.702px;font-family:'Cascadia Code';-inkscape-font-specification:'Cascadia Code Bold';text-align:start;letter-spacing:0px;writing-mode:lr-tb;direction:ltr;text-anchor:start;display:inline;fill:#000000;stroke-width:0.816383"
+       x="730.76538"
+       y="314.09421"
+       id="text1-8"><tspan
+         sodipodi:role="line"
+         id="tspan1-5"
+         x="730.76538"
+         y="314.09421"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:217.702px;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold';text-align:center;letter-spacing:0px;text-anchor:middle;fill:#ffffff;stroke-width:0.816383">Le<tspan
+   style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold';letter-spacing:-4.81px"
+   id="tspan10">t</tspan><tspan
+   style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold';letter-spacing:-14.1px"
+   id="tspan12">r</tspan><tspan
+   style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold';letter-spacing:0.01px"
+   id="tspan8">A</tspan>Z</tspan></text>
+    <g
+       id="layer1-1"
+       transform="matrix(1.1573277,0,0,1,365.22798,-10.987177)"
+       style="display:inline" />
+  </g>
+</svg>
