@@ -376,23 +376,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeBoard(handleboxClick);
     createKeyboard(handleKeyPress);
 
-const splashScreen = document.getElementById('splash-screen');
-const wasLaunchedFromHomeScreen = () => window.matchMedia('(display-mode: standalone)').matches || new URLSearchParams(window.location.search).has('source');
 
-// Verifica se o app foi aberto pelo ícone E se a splash screen ainda não foi mostrada nesta sessão
-if (splashScreen && wasLaunchedFromHomeScreen() && !sessionStorage.getItem('splashShown')) {
-  
-  // 1. Marca que a splash já foi exibida para esta sessão
-  sessionStorage.setItem('splashShown', 'true');
-
-  // 2. Mostra a splash screen
-  splashScreen.classList.add('visible');
-
-  // 3. Esconde após a animação
-  setTimeout(() => {
-    splashScreen.classList.remove('visible');
-  }, 1500);
-}
 
 
     const modeModal = document.getElementById("modeModal");
