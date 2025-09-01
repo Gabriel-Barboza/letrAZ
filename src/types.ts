@@ -2,7 +2,6 @@
 
 export const PLAYS = 5;
 export const LETTERS = 5;
-
 export type GameModeType = "daily" | "random" | "timed";
 
 export interface GameStats {

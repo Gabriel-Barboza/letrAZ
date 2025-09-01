@@ -8,21 +8,16 @@ export interface SubmitResult {
     isWin: boolean;
     message?: string;
 }
-
 export function submitGuess(): SubmitResult {
     const activeGameState = getActiveGameState();
     const guess = activeGameState.guesses[activeGameState.currentRow] || "";
-
     if (guess.length < LETTERS) {
         return { isValid: false, isWin: false, message: "Digite 5 letras." };
     }
-
     if (!dicionarioValido.has(guess)) {
         return { isValid: false, isWin: false, message: "Palavra inválida." };
     }
-
     const isWin = guess === palavraCerta;
-
     return { isValid: true, isWin: isWin };
 }
 export function evaluateGuess(
@@ -40,7 +35,6 @@ export function evaluateGuess(
             answerLetters[i] = "";
         }
     }
-
     for (let i = 0; i < LETTERS; i++) {
         if (result[i] === "correct") continue;
         const letterIndexInAnswer = answerLetters.indexOf(guessLetters[i]);
@@ -51,14 +45,12 @@ export function evaluateGuess(
     }
     return result;
 }
-
 export function calculateAllKeyStatuses(
     guesses: string[],
     answer: string
 ): Record<string, "correct" | "present" | "absent"> {
     const keyStatus: Record<string, "correct" | "present" | "absent"> = {};
     const relevantGuesses = guesses.filter((g) => g);
-
     for (const guess of relevantGuesses) {
         const statuses = evaluateGuess(guess, answer);
         for (let i = 0; i < guess.length; i++) {
@@ -93,17 +85,15 @@ export function calculateRushModeScore(
             letterPoints += 1;
         }
     }
-
     const rowMultiplier = PLAYS - currentRow;
-
-let timeMultiplier = 1;
-    if (timeLeft >= 20) {      
+    let timeMultiplier = 1;
+    if (timeLeft >= 20) {
         timeMultiplier = 5;
-    } else if (timeLeft >= 15) { 
+    } else if (timeLeft >= 15) {
         timeMultiplier = 4;
-    } else if (timeLeft >= 10) { 
+    } else if (timeLeft >= 10) {
         timeMultiplier = 3;
-    } else if (timeLeft >= 5) { 
+    } else if (timeLeft >= 5) {
         timeMultiplier = 2;
     }
 

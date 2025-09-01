@@ -6426,28 +6426,21 @@ const todasAsTentativas = [...respostas, ...tentativasValidas]
     .map((palavra) => palavra.toUpperCase());
 
 export const dicionarioValido = new Set(todasAsTentativas);
-
 export let palavraCerta: string;
-
 export function setPalavraCerta(palavra: string) {
     console.log(`[words.ts] A palavraCerta foi definida como: ${palavra}`); 
     palavraCerta = palavra;
 }
-
 export function getDailyWord(): string {
     const dataInicio = new Date("2025-07-18T00:00:00");
     const hoje = new Date();
-
     dataInicio.setHours(0, 0, 0, 0);
     hoje.setHours(0, 0, 0, 0);
-
     const diffTempo = hoje.getTime() - dataInicio.getTime();
     const diffDias = Math.floor(diffTempo / (1000 * 60 * 60 * 24));
-
     const index = diffDias % respostasFiltradas.length;
     return respostasFiltradas[index];
 }
-
 export function selectRandomWord(): string {
     const randomIndex = Math.floor(Math.random() * respostasFiltradas.length);
     return respostasFiltradas[randomIndex];

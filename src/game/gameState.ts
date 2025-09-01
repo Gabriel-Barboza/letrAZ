@@ -9,13 +9,10 @@ import type {
     timedModeStats,
 } from "../types";
 import { EventBus } from "../eventBus";
-
 let state: SaveData;
-
 function getTodayDateString(): string {
     return new Date().toISOString().split("T")[0];
 }
-
 function createInitialState(): SaveData {
     const createCleanGameState = (
         includeDate: boolean = false
@@ -69,20 +66,16 @@ function createInitialState(): SaveData {
 }
 export function saveState() {
     const stateToSave = JSON.parse(JSON.stringify(state));
-
     stateToSave.modes.random.gameState =
         createInitialState().modes.random.gameState;
     stateToSave.modes.timed.gameState =
         createInitialState().modes.timed.gameState;
-
     localStorage.setItem("gameData", JSON.stringify(stateToSave));
 }
-
 export function setInteractionPaused(isPaused: boolean) {
     getActiveGameState().isInteractionPaused = isPaused;
     EventBus.emit("stateChanged");
 }
-
 export function initializeState() {
     const savedDataString = localStorage.getItem("gameData");
     state = createInitialState();
@@ -113,31 +106,19 @@ export function initializeState() {
 
     if (!savedDate || savedDate !== today) {
         console.log(" NOVO DIA DETECTADO - ATUALIZANDO...");
-
         const currentStats = state.modes.daily.stats;
-
         state.modes.daily = createInitialState().modes.daily;
         state.modes.daily.stats = currentStats;
-
         state.modes.daily.gameState.date = today;
-
-        console.log("Data após reset:", state.modes.daily.gameState.date);
-
         EventBus.emit("stateChanged");
         EventBus.emit("guessSubmitted");
-
         saveState();
-
-        console.log(" ESTADO SALVO COM NOVA DATA");
-
         const verificacao = JSON.parse(localStorage.getItem("gameData") || "{}");
         console.log(
             "Data no localStorage após save:",
             verificacao.modes?.daily?.gameState?.date
         );
-    } else {
-        console.log(" MESMO DIA - NÃO ATUALIZOU");
-    }
+    } 
 }
 export function getState(): SaveData {
     return state;
@@ -148,7 +129,6 @@ export function getActiveGameState(): CurrentGameState {
 export function getActiveStats() {
     return state.modes[state.activeMode].stats;
 }
-
 export function setActiveGameMode(mode: GameModeType) {
     const savedDataString = localStorage.getItem("gameData");
     if (savedDataString) {
@@ -161,11 +141,9 @@ export function setActiveGameMode(mode: GameModeType) {
             console.error("Erro ao recarregar estado antes da troca de modo.", error);
         }
     }
-
     state.activeMode = mode;
     saveState();
 }
-
 export function resetGameStateForNewGame() {
     const initialState = createInitialState();
     state.modes[state.activeMode].gameState =

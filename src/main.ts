@@ -33,7 +33,6 @@ import {
     palavraCerta,
 } from "./game/words";
 import { EventBus } from "./eventBus";
-
 let rushTimerId: number | null = null;
 
 function stopRushTimer() {
@@ -45,12 +44,10 @@ function stopRushTimer() {
 
     }
 }
-
 function advanceToNextRushWord() {
     stopRushTimer();
     const rushState = getState().modes.timed;
     const wordIndex = rushState.gameState.currentWordIndex || 0;
-
     const setupNextWord = () => {
         advanceRushWordIndex();
         const newWord = selectRandomWord();
@@ -67,7 +64,6 @@ function advanceToNextRushWord() {
             wordCountUI.textContent = (updatedWordIndex + 1).toString();
         }
     };
-
     if (wordIndex >= 9) {
         getActiveGameState().isGameOver = true;
         rushState.stats.gamesPlayed++;
@@ -76,7 +72,6 @@ function advanceToNextRushWord() {
             rushState.stats.maxScore = rushState.stats.score;
         }
         saveState();
-
         showMessage(
             `Fim de Jogo! Pontuação Final: ${rushState.stats.score}`,
             "success",
@@ -84,7 +79,6 @@ function advanceToNextRushWord() {
         );
         resetRushBoard();
         updateKeyboardAppearance();
-
         const startBtn = document.getElementById("rush-start-btn") as HTMLElement;
         if (startBtn) {
             const boardContainer = document.getElementById("container-tabuleiro");
@@ -98,9 +92,7 @@ function advanceToNextRushWord() {
 
     setTimeout(setupNextWord, 1000);
 }
-
 const RUSH_TIME_LIMIT = 25; 
-
 function startRushTimer() {
     stopRushTimer();
     const timerSpan = document.getElementById('rush-timer') as HTMLElement;
@@ -138,7 +130,6 @@ function startRushTimer() {
         }
     }, 1000);
 }
-
 function updateTheme(mode: GameModeType) {
     const body = document.body;
     body.classList.remove("theme-daily", "theme-random", "theme-timed");
@@ -146,7 +137,6 @@ function updateTheme(mode: GameModeType) {
     else if (mode === "random") body.classList.add("theme-random");
     else if (mode === "timed") body.classList.add("theme-timed");
 }
-
 function updateHeader(mode: GameModeType) {
     const headerLink = document.getElementById("headerLink");
     if (headerLink) {
@@ -155,16 +145,12 @@ function updateHeader(mode: GameModeType) {
         else if (mode === "timed") headerLink.textContent = "LetrAZ Rush";
     }
 }
-
 function startGame(mode: GameModeType) {
     const rushUI = document.getElementById("rush-mode-ui");
     const startBtn = document.getElementById("rush-start-btn");
     const boardContainer = document.getElementById("container-tabuleiro");
-
     document.getElementById("play-again-btn")?.classList.add("hidden");
-
     stopRushTimer();
-
     setActiveGameMode(mode);
     updateHeader(mode);
     updateTheme(mode);
@@ -176,7 +162,6 @@ function startGame(mode: GameModeType) {
             "1";
         (document.getElementById("rush-timer") as HTMLElement).textContent = "25";
     }
-
     const word = mode === "daily" ? getDailyWord() : selectRandomWord();
     setPalavraCerta(word);
 
@@ -186,7 +171,6 @@ function startGame(mode: GameModeType) {
         EventBus.emit("stateChanged");
         EventBus.emit("guessSubmitted");
     }
-
     updateKeyboardAppearance();
 
     if (mode === "timed") {
@@ -205,14 +189,12 @@ function startGame(mode: GameModeType) {
     EventBus.emit("stateChanged");
     setTimeout(updateKeyboardAppearance, 0);
 }
-
 function updateStatsModal() {
     const state = getState();
     const dailyStats = state.modes.daily.stats;
     const randomStats = state.modes.random.stats;
     const timedStats = state.modes.timed.stats;
 
-    // Daily Stats
     const dailyGamesPlayed = dailyStats?.gamesPlayed || 0;
     const dailyWins = dailyStats?.wins || 0;
     const dailyCurrentStreak = dailyStats?.currentStreak || 0;
@@ -224,7 +206,6 @@ function updateStatsModal() {
     (document.getElementById('daily-streak') as HTMLElement).textContent = dailyCurrentStreak.toString();
     (document.getElementById('daily-max-streak') as HTMLElement).textContent = dailyMaxStreak.toString();
 
-    // Random Stats
     const randomGamesPlayed = randomStats?.gamesPlayed || 0;
     const randomWins = randomStats?.wins || 0;
     const randomCurrentStreak = randomStats?.currentStreak || 0;
@@ -253,7 +234,6 @@ function handleboxClick(row: number, col: number) {
     if (currentState.isGameOver || row !== currentState.currentRow) return;
     setCursorPosition(col);
 }
-
 function letterStrategy(key: string) {
     const currentState = getActiveGameState();
     const pos = currentState.currentCol;
@@ -268,7 +248,6 @@ function letterStrategy(key: string) {
     updateCurrentGuess(newGuess.slice(0, LETTERS));
     moveCursorRight();
 }
-
 function backspaceStrategy() {
     const currentState = getActiveGameState();
     const pos = currentState.currentCol;
@@ -299,7 +278,6 @@ function enterStrategy(): void {
         if (result.message) showMessage(result.message, "error");
         return;
     }
-
     const didWin = result.isWin;
     const currentState = getState();
 
@@ -337,10 +315,8 @@ function enterStrategy(): void {
             }
         }
     }
-
     advanceToNextRow();
 }
-
 const keyStrategies: Record<string, () => void> = {
     enter: enterStrategy,
     backspace: backspaceStrategy,
@@ -351,41 +327,29 @@ const keyStrategies: Record<string, () => void> = {
 function handleKeyPress(key: string, event?: KeyboardEvent) {
     if (getActiveGameState().isInteractionPaused) return;
     if (getActiveGameState().isGameOver) return;
-
     if (key === "enter" && event) {
         event.preventDefault();
     }
-
     const strategy = keyStrategies[key];
     if (strategy) {
         strategy();
         return;
     }
-
     if (/^[a-z]$/.test(key)) {
         letterStrategy(key);
     }
 }
 document.addEventListener("DOMContentLoaded", () => {
-
-     
-
     initializeState();
     startGame("daily");
-
     initializeBoard(handleboxClick);
     createKeyboard(handleKeyPress);
-
-
-
-
     const modeModal = document.getElementById("modeModal");
     const modeModalButton = document.getElementById("modeModalButton");
     const helpCloseButton = modeModal?.querySelector(".close-button");
     const statsModal = document.getElementById("stats-modal");
     const statsModalButton = document.getElementById("statsModalButton");
     const statsCloseButton = document.getElementById("stats-close-button");
-
 
 document.getElementById('rush-start-btn')?.addEventListener('click', () => {
     const startBtn = document.getElementById('rush-start-btn') as HTMLElement;
@@ -396,7 +360,6 @@ document.getElementById('rush-start-btn')?.addEventListener('click', () => {
         startRushTimer();
     
 });
-
     modeModalButton?.addEventListener("click", (event) => {
         event.stopPropagation();
         modeModal?.classList.remove("hidden");
@@ -435,6 +398,4 @@ document.getElementById('rush-start-btn')?.addEventListener('click', () => {
         ?.addEventListener("click", () => startGame("random"));
 
     EventBus.emit("initialStateLoaded");
-
- 
 });

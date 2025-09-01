@@ -7,7 +7,6 @@ import { evaluateGuess } from '../game/game';
 import { palavraCerta } from '../game/words';
 
 let grid: HTMLElement;
-
 function renderBoard(gameState: CurrentGameState) {
     for (let i = 0; i < PLAYS; i++) {
         const rowEl = grid.children[i] as HTMLElement;
@@ -34,7 +33,6 @@ function renderBoard(gameState: CurrentGameState) {
         if (cursor) cursor.classList.remove('cursor');
     }
 }
-
 function CurrentBox(col: number, row: number) {
     if (!grid) return;
     const prevCursor = grid.querySelector(".cursor");
@@ -48,7 +46,6 @@ function CurrentBox(col: number, row: number) {
         box.classList.add("cursor");
     }
 }
-
 export function createBoard(handleClick: (row: number, col: number) => void) {
     const gridElement = document.getElementById("tabuleiro");
     if (!gridElement) {
@@ -70,7 +67,6 @@ export function createBoard(handleClick: (row: number, col: number) => void) {
         grid.appendChild(rowEl);
     }
 }
-
 export function initializeBoard(handleClick: (row: number, col: number) => void) {
     createBoard(handleClick);
     EventBus.on('stateChanged', () => {

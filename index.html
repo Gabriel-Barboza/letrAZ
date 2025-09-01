@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="pt-br" class="h-full">
-
 <head>
 <meta charset="UTF-8" />
 <title>LetrAZ - Jogo de Adivinhar Palavras em Português</title>
+<link rel="icon" type="image/png" href="/favIconF.svg" />
 <meta name="description" content="Teste seu vocabulário com o LetrAZ! Um divertido jogo de adivinhar a palavra de 5 letras em português. Jogue o desafio do dia, pratique no modo livre ou experimente o modo inovador Rush.">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta property="og:title" content="LetrAZ - Jogo de Adivinhar Palavras em Português" />
@@ -11,9 +11,11 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://letra-az.vercel.app" />
 <meta property="og:site_name" content="LetrAZ" /> 
-
 <meta property="og:image" content="https://letra-az.vercel.app/pwa-512x512.png" />
-    <script src="https://kit.fontawesome.com/9f894f64ec.js" crossorigin="anonymous"></script>
+<link rel="preconnect" href="https://kit.fontawesome.com/9f894f64ec.js"/>
+<link rel="dns-prefetch" href="https://kit.fontawesome.com/9f894f64ec.js" />
+
+
 </head>
 
 <body id="app" class="flex flex-col min-h-dvh bg-sky-50">
@@ -23,7 +25,7 @@
     <nav>
         <div class="text-center flex justify-around items-center gap-2 p-2 bg-sky-100 shadow-md mb-4">
 
-            <button id="statsModalButton"
+            <button aria-label="Abrir Estatísticas" id="statsModalButton"
                 class="px-2 md:px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700 focus:outline-none">
                 <i class="fa-solid fa-chart-simple"></i>
             </button>
@@ -43,7 +45,7 @@
                 </button>
             </div>
 
-            <button id="modeModalButton"
+            <button aria-label="Abrir Informações do Jogo" id="modeModalButton"
                 class="px-2 md:px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700 focus:outline-none">
                 <i class="fa-solid fa-question"></i>
             </button>
@@ -55,7 +57,7 @@
         <div class="modal-content bg-sky-100 p-6 rounded-lg shadow-xl relative max-w-3xl mx-auto text-left">
             <span
                 class="close-button absolute top-2 right-4 text-gray-500 text-3xl cursor-pointer hover:text-gray-800">&times;</span>
-            <img src="/letrazLogoFF.svg" alt="LetrAZ Logo" class="w-80 h-16 mx-auto mb-4" />
+            <img src="/letrazLogoFF.svg" width="224" height="64" alt="LetrAZ Logo" class="  mx-auto mb-4" />
             <p class="text-gray-600 mb-6 text-center">Descubra a palavra secreta em até <strong>5 tentativas</strong>.
             </p>
 
@@ -89,18 +91,18 @@
                 </div>
             </div>
             <div class="text-left">
-                <h3 class="text-xl font-semibold text-gray-700 mb-4 text-center">🎮 Modos de Jogo</h3>
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 text-center">🎮 Modos de Jogo</h2>
                 <div class="space-y-5">
                     <div class="flex items-start gap-3"><span class="text-2xl pt-1">♾️</span>
                         <div>
-                            <h4 class="font-bold text-gray-800">Modo Livre</h4>
+                            <h3 class="font-bold text-gray-800">Modo Livre</h3>
                             <p class="text-gray-900">Não quer esperar? Jogue quantas vezes quiser! Cada partida traz uma
                                 palavra aleatória para você decifrar. Perfeito para treinar.</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3"><span class="text-2xl pt-1">📅</span>
                         <div>
-                            <h4 class="font-bold text-gray-800">Modo Diário (Clássico)</h4>
+                            <h3 class="font-bold text-gray-800">Modo Diário (Clássico)</h3>
                             <p class="text-gray-900">O desafio original. Uma única palavra por dia, a mesma para todos
                                 os jogadores. Volte amanhã para um novo desafio!</p>
                         </div>
@@ -108,7 +110,7 @@
 
                     <div class="flex items-start gap-3"><span class="text-2xl pt-1">⚡️</span>
                         <div>
-                            <h4 class="font-bold text-gray-800">Modo Rush</h4>
+                            <h3 class="font-bold text-gray-800">Modo Rush</h3>
                             <p class="text-gray-900 mb-2">Teste sua agilidade contra o tempo! Um desafio de alta
                                 velocidade com pontuação.</p>
                             <ul class="list-disc list-inside text-gray-900 space-y-1">
@@ -259,6 +261,7 @@
     <div class="h-[env(safe-area-inset-bottom)]"></div>
 
     <script type="module" src="/src/main.ts"></script>
+    <script src="https://kit.fontawesome.com/9f894f64ec.js" crossorigin="anonymous"></script>
 
 </body>
 
